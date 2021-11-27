@@ -12,7 +12,10 @@ const app = express()
 app.use(express.json())
 
 app.use(cors({
-    origin: false // отключает cors политику
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 }))
 
 app.use(`/api`, router)
