@@ -3,6 +3,7 @@ const express = require("express")
 const router = require(`./router/index`)
 const documentation = require(`./helper/documentation`)
 const cors = require('cors')
+const bodyParser = require('body-parser')
 
 const errorMiddleware = require(`./middlewares/error-middleware`)
 
@@ -12,9 +13,13 @@ const app = express()
 app.use(express.json())
 
 app.use(cors({
-    origin: false // отключает cors политику
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 }))
-
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 app.use(`/api`, router)
 
 
