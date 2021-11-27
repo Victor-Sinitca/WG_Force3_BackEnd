@@ -2,6 +2,7 @@ require("dotenv").config()
 const express = require("express")
 const router = require(`./router/index`)
 const documentation = require(`./helper/documentation`)
+const cors = require('cors')
 
 const errorMiddleware = require(`./middlewares/error-middleware`)
 
@@ -9,6 +10,10 @@ const errorMiddleware = require(`./middlewares/error-middleware`)
 const PORT = process.env.PORT || 8000
 const app = express()
 app.use(express.json())
+
+app.use(cors({
+    origin: false // отключает cors политику
+}))
 
 app.use(`/api`, router)
 
