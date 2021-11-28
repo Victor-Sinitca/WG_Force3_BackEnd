@@ -1,6 +1,10 @@
 /*const UserModel = require(`../models/user-model`)
 const UserDto = require(`../dtos/user-dto`)*/
-
+const ApiError = require(`../exceptions/api-error`)
+const TechniqueModel = require(`../models/technique-model`)
+const PremiumModel = require(`../models/premium-model`)
+const GoldModel = require(`../models/gold-model`)
+const ProvisionsModel = require(`../models/provisions-model`)
 
 const productData = [
     {
@@ -160,34 +164,131 @@ function isPositiveInteger(value) {
 }
 
 class ProductService {
-    async getOneProduct(productID) {
+    async addProduct(productData, type) {
+        let resultCode = 0
+        const messages = []
+        if (!productData) {
+            resultCode = 1
+            messages.push("product data not set")
+        }
+        if (!type) {
+            resultCode = 1
+            messages.push("type product not set")
+        }
+        let product=null
+        if(type === "technique"){
+            const candidate = await TechniqueModel.findOne({name:productData.name})
+            if (candidate) {
+                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} уже зарегистрирован`,)
+            }
+            product = await TechniqueModel.create(productData)
+            const productDto =  product.getData()
+            return {
+                resultCode,
+                messages,
+                data: productDto || null
+            }
+        }
+        if(type === "premium"){
+            const candidate = await PremiumModel.findOne({name:productData.name})
+            if (candidate) {
+                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} уже зарегистрирован`,)
+            }
+            product = await PremiumModel.create(productData)
+            const productDto =  product.getData()
+            return {
+                resultCode,
+                messages,
+                data: productDto || null
+            }
+        }
+        if(type === "gold"){
+            const candidate = await GoldModel.findOne({name:productData.name})
+            if (candidate) {
+                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} уже зарегистрирован`,)
+            }
+            product = await GoldModel.create(productData)
+            const productDto =  product.getData()
+            return {
+                resultCode,
+                messages,
+                data: productDto || null
+            }
+        }
+        if(type === "provisions"){
+            const candidate = await ProvisionsModel.findOne({name:productData.name})
+            if (candidate) {
+                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} уже зарегистрирован`,)
+            }
+            product = await ProvisionsModel.create(productData)
+            const productDto =  product.getData()
+            return {
+                resultCode,
+                messages,
+                data: productDto || null
+            }
+        }
+
+    }
+
+    async getOneProduct(productID, type) {
         let resultCode = 0
         const messages = []
         if (!productID) {
             resultCode = 1
             messages.push("product id not set")
         }
-        const oneProduct = productData.filter(value => value.productID === productID)
-        if (oneProduct.length === 0 || oneProduct.length > 1) {
+        if (!type) {
             resultCode = 1
-            if (oneProduct.length === 0) messages.push("product with passed id not found")
-            if (oneProduct.length > 1) messages.push("there are several products with the same id")
+            messages.push("product type not set")
         }
-        if (resultCode) {
+        if(type === "technique"){
+            const candidate = await TechniqueModel.findOne({_id:productID})
+            if (!candidate) {
+                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} не зарегистрирован`,)
+            }
+            const productDto =  candidate.getData()
             return {
                 resultCode,
                 messages,
-                data: {}
+                data: productDto || null
             }
         }
-        /*const users = await productModel.find()
-        return users.map(u=>{
-            return new UserDto(u)
-        })*/
-        return {
-            resultCode,
-            messages,
-            data: oneProduct[0]
+        if(type === "premium"){
+            const candidate = await PremiumModel.findOne({_id:productID})
+            if (!candidate) {
+                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} не зарегистрирован`,)
+            }
+            const productDto =  candidate.getData()
+            return {
+                resultCode,
+                messages,
+                data: productDto || null
+            }
+        }
+        if(type === "gold"){
+            const candidate = await GoldModel.findOne({_id:productID})
+            if (!candidate) {
+                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} не зарегистрирован`,)
+            }
+            const productDto =  candidate.getData()
+            return {
+                resultCode,
+                messages,
+                data: productDto || null
+            }
+        }
+        if(type === "provisions"){
+            const candidate = await ProvisionsModel.findOne({_id:productID})
+            if (!candidate) {
+                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} не зарегистрирован`,)
+            }
+            const productDto =  candidate.getData()
+            return {
+                resultCode,
+                messages,
+                data: productDto || null
+            }
         }
     }
 

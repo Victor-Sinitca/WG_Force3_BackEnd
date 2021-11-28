@@ -53,3 +53,12 @@ type Product = {
     span: number,
     data: Premium | TechniqueType
 }
+
+
+
+type UserType={
+    id: string,
+    name: string,
+    wishlist: Array<string>,
+    shoppingList: Array<string>,
+}

@@ -1,11 +1,21 @@
 const productService = require(`../service/product-service`)
 
 class ProductController {
+    async addProduct(req, res, next) {
+        try {
+            const {data, type}=req.body
+            /* console.log(`addProduct  data:${data}`)*/
+            const oneProduct = await productService.addProduct(data, type)
+            await res.json(oneProduct)
+        } catch (e) {
+            next(e)
+        }
+    }
     async getOneProduct(req, res, next) {
         try {
-            const {id:userId}=req.params
+            const {id, type}=req.body
             /* console.log(`id:${userId}`)*/
-            const oneProduct = await productService.getOneProduct(userId)
+            const oneProduct = await productService.getOneProduct(id, type)
             await res.json(oneProduct)
         } catch (e) {
             next(e)

@@ -11,7 +11,10 @@ router.get(`/productList`,productController.getProducts)
 // GET /api/product/5
 router.get(`/product/:id`,productController.getOneProduct)
 
+
+router.post(`/product` , productController.addProduct)
 router.post(`/user` , userController.setUserData)
+router.post(`/addUser` , userController.addUser)
 router.post(`/user/wishlist` , userController.setUserWishlist)
 router.post(`/user/shopping` , userController.setUserShopping)
 

@@ -1,9 +1,20 @@
 const userService = require(`../service/user-service`)
 
 class UserController {
+    async addUser(req, res, next) {
+        try {
+            const {name} = req.body
+             console.log(`addUser - name:${name}`)
+            const userData = await userService.addUser(name)
+            await res.json(userData)
+        } catch (e) {
+            next(e)
+        }
+    }
     async getUserData(req, res, next) {
         try {
             const {id:userId}=req.params
+
            /* console.log(`id:${userId}`)*/
             const userData = await userService.getUserData(userId)
             await res.json(userData)
@@ -13,7 +24,7 @@ class UserController {
     }
     async setUserData(req, res, next) {
         try {
-            const {userID, data}=req.body
+            const {userID, data} = req.body
            /* console.log(`id:${userID}`)*/
             /*console.log(`body:${JSON.stringify(req.body)}`)*/
             const userData = await userService.setUserData(userID,data)
@@ -25,7 +36,7 @@ class UserController {
     async setUserWishlist(req, res, next) {
         try {
             const {userID, data}=req.body
-           /* console.log(`id:${userID}`)*/
+            /*console.log(`id:${userID}`)*/
            /* console.log(`body:${JSON.stringify(req.body)}`)*/
             const userData = await userService.setUserWishlist(userID,data)
             await res.json(userData)
@@ -48,10 +59,4 @@ class UserController {
 
 module.exports = new UserController()
 
-const data={
-    userID:2,
-    data:{
-        wishlist: [],
-        shopping: [],
-    }
-}
+
