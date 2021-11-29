@@ -32,6 +32,16 @@ class ProductController {
             next(e)
         }
     }
+    async getProductsOnFilter(req, res, next) {
+        try {
+            const {filter}=req.body
+            console.log(`getProductsOnFilter filter:${filter}`)
+            const products = await productService.getProductsOnFilter(filter)
+            await res.json(products)
+        } catch (e) {
+            next(e)
+        }
+    }
 }
 
 module.exports = new ProductController()

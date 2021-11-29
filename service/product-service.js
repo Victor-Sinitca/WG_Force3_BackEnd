@@ -5,6 +5,8 @@ const TechniqueModel = require(`../models/technique-model`)
 const PremiumModel = require(`../models/premium-model`)
 const GoldModel = require(`../models/gold-model`)
 const ProvisionsModel = require(`../models/provisions-model`)
+const FilterModel = require(`../models/filter-model`)
+
 
 const productData = [
     {
@@ -160,7 +162,44 @@ const productData = [
 
 function isPositiveInteger(value) {
     return Number.isInteger(+value) && +value >= 0
+}
 
+Function.prototype.getTech = function () {
+    return {
+        id: this._id,
+        name: this.name,
+        description: this.description,
+        nation: this.nation,
+        type: this.type,
+        tier: this.tier,
+        price: {
+            value: this.price.value,
+            currency: this.price.currency,
+            discount:this.price.discount,
+        },
+        images: {
+            big_icon: this.images.big_icon,
+            contour_icon: this.images.contour_icon,
+            small_icon: this.images.small_icon
+        },
+    }
+
+}
+Function.prototype.getAnyProd = function() {
+    return {
+        id: this._id,
+        name: this.name,
+        description: this.description,
+        price: {
+            value: this.price.value,
+            currency: this.price.currency,
+            discount:this.price.discount,
+        },
+        images: {
+            big_icon: this.images.big_icon,
+            small_icon: this.images.small_icon
+        },
+    }
 }
 
 class ProductService {
@@ -183,6 +222,7 @@ class ProductService {
             }
             product = await TechniqueModel.create(productData)
             const productDto =  product.getData()
+            await FilterModel.create({productId:productDto.id, type:"Technique", filter:["Technique","Premium"]})
             return {
                 resultCode,
                 messages,
@@ -196,6 +236,7 @@ class ProductService {
             }
             product = await PremiumModel.create(productData)
             const productDto =  product.getData()
+            await FilterModel.create({productId:productDto.id, type:"Premium", filter:["Premium"]})
             return {
                 resultCode,
                 messages,
@@ -209,6 +250,7 @@ class ProductService {
             }
             product = await GoldModel.create(productData)
             const productDto =  product.getData()
+            await FilterModel.create({productId:productDto.id, type:'Gold', filter:["gold"]})
             return {
                 resultCode,
                 messages,
@@ -222,6 +264,7 @@ class ProductService {
             }
             product = await ProvisionsModel.create(productData)
             const productDto =  product.getData()
+            await FilterModel.create({productId:productDto.id, type:'Provisions', filter:["Provisions","Premium"]})
             return {
                 resultCode,
                 messages,
@@ -328,6 +371,25 @@ class ProductService {
             messages,
             totalCount: productData.length,
             data: products
+        }
+    }
+    async getProductsOnFilter(filter = "") {
+        if (!filter)  throw ApiError.BadRequest(`фильтр не установлен`)
+        let resultCode = 0
+        const messages = []
+        const products =  await FilterModel.find({}).where('filter').in([filter]).sort({ priority: -1 }).populate('productId')
+       /* console.log(products)*/
+        const productDto = products.map((p)=>{
+            return{
+                type:p.type,
+                span:1,
+                data:p.productId.getData()
+            }
+        })
+        return {
+            resultCode,
+            messages,
+            data: productDto || null
         }
     }
 }

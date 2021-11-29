@@ -9,7 +9,10 @@ router.get(`/user/:id`,userController.getUserData)
 // GET /api/productList?page=10&count=20&filter=all
 router.get(`/productList`,productController.getProducts)
 // GET /api/product/5
+
+router.get(`/product/filter`,productController.getProductsOnFilter)
 router.get(`/product/:id`,productController.getOneProduct)
+
 
 
 router.post(`/product` , productController.addProduct)
