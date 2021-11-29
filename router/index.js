@@ -15,6 +15,7 @@ router.get(`/product/:id`,productController.getOneProduct)
 
 
 
+router.post(`/products` , productController.addManyProducts)
 router.post(`/product` , productController.addProduct)
 router.post(`/user` , userController.setUserData)
 router.post(`/addUser` , userController.addUser)

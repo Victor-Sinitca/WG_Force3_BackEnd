@@ -9,7 +9,8 @@ const FilterScheme = new Schema({
         enum: ['Technique', 'Premium', 'Gold','Provisions']
     },
     filter:[{type: String, require: true}],
-    priority:{type: Number, min: 0, default:0,}
+    priority:{type: Number, min: 0, default:0,},
+    span:{type: Number, min: 1, default:1,}
 })
 
 FilterScheme.methods.getData = function () {

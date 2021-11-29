@@ -14,12 +14,14 @@ type typeType = "AT-SPG" | "heavyTank" | "lightTank" | "mediumTank" | "SPG"
 type tierType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
 
 type TechniqueType = {
-    id: string,
+    tank_id: string,
     name: string,
+    short_name:string,
     description: string,
     nation: nationType,
     type: typeType,
     tier: tierType,
+    is_wheeled:boolean,
     price: {
         value: string,
         currency: string,

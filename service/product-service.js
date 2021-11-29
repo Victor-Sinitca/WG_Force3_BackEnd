@@ -159,48 +159,14 @@ const productData = [
     }
 ]
 
-
 function isPositiveInteger(value) {
     return Number.isInteger(+value) && +value >= 0
 }
-
-Function.prototype.getTech = function () {
-    return {
-        id: this._id,
-        name: this.name,
-        description: this.description,
-        nation: this.nation,
-        type: this.type,
-        tier: this.tier,
-        price: {
-            value: this.price.value,
-            currency: this.price.currency,
-            discount:this.price.discount,
-        },
-        images: {
-            big_icon: this.images.big_icon,
-            contour_icon: this.images.contour_icon,
-            small_icon: this.images.small_icon
-        },
-    }
+function isError() {
 
 }
-Function.prototype.getAnyProd = function() {
-    return {
-        id: this._id,
-        name: this.name,
-        description: this.description,
-        price: {
-            value: this.price.value,
-            currency: this.price.currency,
-            discount:this.price.discount,
-        },
-        images: {
-            big_icon: this.images.big_icon,
-            small_icon: this.images.small_icon
-        },
-    }
-}
+
+
 
 class ProductService {
     async addProduct(productData, type) {
@@ -214,64 +180,42 @@ class ProductService {
             resultCode = 1
             messages.push("type product not set")
         }
-        let product=null
-        if(type === "technique"){
+        let productDto=null
+        if(type === "Technique"){
             const candidate = await TechniqueModel.findOne({name:productData.name})
-            if (candidate) {
-                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} уже зарегистрирован`,)
-            }
-            product = await TechniqueModel.create(productData)
-            const productDto =  product.getData()
-            await FilterModel.create({productId:productDto.id, type:"Technique", filter:["Technique","Premium"]})
-            return {
-                resultCode,
-                messages,
-                data: productDto || null
-            }
+            if (candidate) throw ApiError.BadRequest(`продукт с таким именем:${productData.name} уже зарегистрирован`,)
+            let product = await TechniqueModel.create(productData)
+            productDto =  product.getData()
+            await FilterModel.create({productId:productDto.id, type:type, filter:[type,"Premium"]})
         }
-        if(type === "premium"){
+        if(type === "Premium"){
             const candidate = await PremiumModel.findOne({name:productData.name})
-            if (candidate) {
-                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} уже зарегистрирован`,)
-            }
-            product = await PremiumModel.create(productData)
-            const productDto =  product.getData()
-            await FilterModel.create({productId:productDto.id, type:"Premium", filter:["Premium"]})
-            return {
-                resultCode,
-                messages,
-                data: productDto || null
-            }
-        }
-        if(type === "gold"){
-            const candidate = await GoldModel.findOne({name:productData.name})
-            if (candidate) {
-                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} уже зарегистрирован`,)
-            }
-            product = await GoldModel.create(productData)
-            const productDto =  product.getData()
-            await FilterModel.create({productId:productDto.id, type:'Gold', filter:["gold"]})
-            return {
-                resultCode,
-                messages,
-                data: productDto || null
-            }
-        }
-        if(type === "provisions"){
-            const candidate = await ProvisionsModel.findOne({name:productData.name})
-            if (candidate) {
-                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} уже зарегистрирован`,)
-            }
-            product = await ProvisionsModel.create(productData)
-            const productDto =  product.getData()
-            await FilterModel.create({productId:productDto.id, type:'Provisions', filter:["Provisions","Premium"]})
-            return {
-                resultCode,
-                messages,
-                data: productDto || null
-            }
-        }
+            if (candidate)  throw ApiError.BadRequest(`продукт с таким именем:${productData.name} уже зарегистрирован`,)
 
+            let product = await PremiumModel.create(productData)
+            productDto =  product.getData()
+            await FilterModel.create({productId:productDto.id, type:type, filter:[type]})
+        }
+        if(type === "Gold"){
+            const candidate = await GoldModel.findOne({name:productData.name})
+            if (candidate) throw ApiError.BadRequest(`продукт с таким именем:${productData.name} уже зарегистрирован`,)
+
+            let product = await GoldModel.create(productData)
+            productDto =  product.getData()
+            await FilterModel.create({productId:productDto.id, type:type, filter:[type]})
+        }
+        if(type === "Provisions"){
+            const candidate = await ProvisionsModel.findOne({name:productData.name})
+            if (candidate) throw ApiError.BadRequest(`продукт с таким именем:${productData.name} уже зарегистрирован`,)
+            let product = await ProvisionsModel.create(productData)
+            productDto =  product.getData()
+            await FilterModel.create({productId:productDto.id, type:type, filter:[type,"Premium"]})
+        }
+        return {
+            resultCode,
+            messages,
+            data: productDto || null
+        }
     }
 
     async getOneProduct(productID, type) {
@@ -373,6 +317,7 @@ class ProductService {
             data: products
         }
     }
+
     async getProductsOnFilter(filter = "") {
         if (!filter)  throw ApiError.BadRequest(`фильтр не установлен`)
         let resultCode = 0
@@ -382,7 +327,7 @@ class ProductService {
         const productDto = products.map((p)=>{
             return{
                 type:p.type,
-                span:1,
+                span:p.span,
                 data:p.productId.getData()
             }
         })

@@ -11,6 +11,18 @@ class ProductController {
             next(e)
         }
     }
+    async addManyProducts(req, res, next) {
+        try {
+            const {data, type}=req.body
+            /* console.log(`addProduct  data:${data}`)*/
+            const products=data.map(async (d) => {
+                return await productService.addProduct(d, type)
+            })
+            await res.json(products)
+        } catch (e) {
+            next(e)
+        }
+    }
     async getOneProduct(req, res, next) {
         try {
             const {id, type}=req.body
