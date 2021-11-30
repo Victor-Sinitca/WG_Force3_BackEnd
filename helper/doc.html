@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Documentation</h1>
+    <p>entrance address: /api</p>
+
+    <h2>methods GET</h2>
+    <h3>Get user by ID</h3>
+    <p>query string address: /user</p>
+    <p>request data:  {id:"string"} <br> example:"61a6286353b5dad92e57b4c0"</p>
+
+    <h3>Get product by ID</h3>
+    <p>query string address: /product</p>
+    <p>request data:  {id:"string", type:"string"} <br> example:{id:"61a61eb74ef1f443c0cb654e", type:"Technique"}
+        <br> some type: "Technique", "Premium", "Gold", "Provisions"  </p>
+
+    <h3>Get products by filter</h3>
+    <p>query string address: /product/filter</p>
+    <p>request data:  {"filter":["string"]} <br> example:{"filter":["Technique"]}. Request ALL :{"filter":["Technique", "Premium", "Gold", "Provisions"]} }
+        <br> some filter: "Technique", "Premium", "Gold", "Provisions"  </p>
+
+
+    <h1>methods POST</h1>
+</body>
+</html>

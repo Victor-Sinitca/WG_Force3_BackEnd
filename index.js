@@ -1,7 +1,6 @@
 require("dotenv").config()
 const express = require("express")
 const router = require(`./router/index`)
-const documentation = require(`./helper/documentation`)
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const errorHandler = require('errorhandler');
@@ -14,7 +13,8 @@ const errorMiddleware = require(`./middlewares/error-middleware`)
 
 const PORT = process.env.PORT || 8000
 const app = express()
-app.use(express.json())
+app.use(express.static('helper'));
+app.use(express.json({limit: '50mb'}))
 
 app.use(cors({
     origin: "*",
@@ -22,12 +22,20 @@ app.use(cors({
     preflightContinue: false,
     optionsSuccessStatus: 204
 }))
-app.use(bodyParser.urlencoded({extended: false}))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({
+    parameterLimit: 100000,
+    limit: '50mb',
+    extended: false
+}))
+app.use(bodyParser.json({
+    type: 'application/json',
+    parameterLimit: 100000,
+    limit: '50mb'
+}))
 app.use(`/api`, router)
 
 
-app.use(`/doc`, documentation)
+/*app.use(`/doc`, documentation)*/
 
 const isProduction = process.env.NODE_ENV === 'production';
 if (!isProduction) {

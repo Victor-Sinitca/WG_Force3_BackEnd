@@ -3,6 +3,7 @@ const {Schema, model} = require(`mongoose`)
 
 const FilterScheme = new Schema({
     productId:{type:Schema.Types.ObjectId,require: true, refPath: 'type'},
+    name:{type: String, require: true},
     type: {
         type: String,
         required: true,

@@ -162,9 +162,7 @@ const productData = [
 function isPositiveInteger(value) {
     return Number.isInteger(+value) && +value >= 0
 }
-function isError() {
 
-}
 
 
 
@@ -186,7 +184,7 @@ class ProductService {
             if (candidate) throw ApiError.BadRequest(`продукт с таким именем:${productData.name} уже зарегистрирован`,)
             let product = await TechniqueModel.create(productData)
             productDto =  product.getData()
-            await FilterModel.create({productId:productDto.id, type:type, filter:[type,"Premium"]})
+            await FilterModel.create({productId:productDto.id, name:productDto.name, type:type, filter:[type]})
         }
         if(type === "Premium"){
             const candidate = await PremiumModel.findOne({name:productData.name})
@@ -194,7 +192,7 @@ class ProductService {
 
             let product = await PremiumModel.create(productData)
             productDto =  product.getData()
-            await FilterModel.create({productId:productDto.id, type:type, filter:[type]})
+            await FilterModel.create({productId:productDto.id, name:productDto.name, type:type, filter:[type]})
         }
         if(type === "Gold"){
             const candidate = await GoldModel.findOne({name:productData.name})
@@ -202,14 +200,14 @@ class ProductService {
 
             let product = await GoldModel.create(productData)
             productDto =  product.getData()
-            await FilterModel.create({productId:productDto.id, type:type, filter:[type]})
+            await FilterModel.create({productId:productDto.id, name:productDto.name, type:type, filter:[type]})
         }
         if(type === "Provisions"){
             const candidate = await ProvisionsModel.findOne({name:productData.name})
             if (candidate) throw ApiError.BadRequest(`продукт с таким именем:${productData.name} уже зарегистрирован`,)
             let product = await ProvisionsModel.create(productData)
             productDto =  product.getData()
-            await FilterModel.create({productId:productDto.id, type:type, filter:[type,"Premium"]})
+            await FilterModel.create({productId:productDto.id, name:productDto.name, type:type, filter:[type]})
         }
         return {
             resultCode,
@@ -232,7 +230,7 @@ class ProductService {
         if(type === "technique"){
             const candidate = await TechniqueModel.findOne({_id:productID})
             if (!candidate) {
-                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} не зарегистрирован`,)
+                throw ApiError.BadRequest(`продукт с таким именем:${productID} не зарегистрирован`,)
             }
             const productDto =  candidate.getData()
             return {
@@ -318,11 +316,11 @@ class ProductService {
         }
     }
 
-    async getProductsOnFilter(filter = "") {
-        if (!filter)  throw ApiError.BadRequest(`фильтр не установлен`)
+    async getProductsOnFilter(filter = []) {
+        if (filter.length === 0)  throw ApiError.BadRequest(`фильтр не установлен`)
         let resultCode = 0
         const messages = []
-        const products =  await FilterModel.find({}).where('filter').in([filter]).sort({ priority: -1 }).populate('productId')
+        const products =  await FilterModel.find({}).where('filter').in(filter).sort({ priority: -1 }).populate('productId')
        /* console.log(products)*/
         const productDto = products.map((p)=>{
             return{

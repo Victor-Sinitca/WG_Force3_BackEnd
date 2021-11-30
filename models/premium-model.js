@@ -4,13 +4,18 @@ const PremiumScheme = new Schema({
     name: {type: String, require: true},
     description: {type: String, require: true},
     price: {
-        value: {type: String, require: true},
-        currency: {type: String, require: true},
-        discount:{type: String, require: true},
+        basic: {
+            cost: {type: String, require: true},
+            currency: {type: String, default: "$",},
+        },
+        actual: {
+            cost: {type: String, default: 0,},
+            currency: {type: String, default: "$",},
+        },
     },
     images: {
-        big_icon: {type: String, require: true},
-        small_icon: {type: String, require: true}
+        span_1x1: {type: String, require: true},
+        span_2x1: {type: String, default: null},
     },
 })
 
@@ -21,13 +26,18 @@ PremiumScheme.methods.getData = function () {
         name: this.name,
         description: this.description,
         price: {
-            value: this.price.value,
-            currency: this.price.currency,
-            discount:this.price.discount,
+            basic: {
+                cost: this.price.basic.cost,
+                currency: this.price.basic.currency,
+            },
+            actual: {
+                cost: this.price.actual.cost,
+                currency: this.price.actual.currency,
+            },
         },
         images: {
-            big_icon: this.images.big_icon,
-            small_icon: this.images.small_icon
+            span_1x1: this.images.span_1x1,
+            span_2x1: this.images.span_2x1,
         },
     }
 };
