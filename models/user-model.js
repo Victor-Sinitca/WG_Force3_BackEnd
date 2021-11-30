@@ -19,13 +19,38 @@ UserScheme.methods.setWish = function (wishId) {
     const length = this.wishlist.length
     this.wishlist = this.wishlist.filter(value => value !== wishId)
     if(this.wishlist.length === length) this.wishlist.push(wishId)
-    return  this.wishlist
+    return {
+        id: this._id,
+        name: this.name,
+        wishlist: this.wishlist,
+        shoppingList: this.shoppingList,
+    }
 };
-UserScheme.methods.setShopping = function (shoppingId) {
-    const length=this.shoppingList.length
+UserScheme.methods.setPurchase = function (shoppingId, isAdd) {
+    const purchaseIsAdd = this.shoppingList.includes(shoppingId)
+    if(purchaseIsAdd && !isAdd){
+        this.shoppingList = this.shoppingList.filter(value => value !== shoppingId)
+    }
+    if(!purchaseIsAdd && isAdd){
+        this.shoppingList.push(shoppingId)
+
+    }
+    return {
+        id: this._id,
+        name: this.name,
+        wishlist: this.wishlist,
+        shoppingList: this.shoppingList,
+    }
+
+   /* const length=this.shoppingList.length
     this.shoppingList = this.shoppingList.filter(value => value !== shoppingId)
     if(this.shoppingList.length === length) this.shoppingList.push(shoppingId)
-    return this.shoppingList
+    return {
+        id: this._id,
+        name: this.name,
+        wishlist: this.wishlist,
+        shoppingList: this.shoppingList,
+    }*/
 };
 
 module.exports = model("User", UserScheme)

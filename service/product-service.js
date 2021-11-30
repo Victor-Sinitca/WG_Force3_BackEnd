@@ -216,64 +216,26 @@ class ProductService {
         }
     }
 
-    async getOneProduct(productID, type) {
+    async getOneProduct(productID) {
         let resultCode = 0
         const messages = []
         if (!productID) {
             resultCode = 1
             messages.push("product id not set")
         }
-        if (!type) {
-            resultCode = 1
-            messages.push("product type not set")
+        const candidate = await FilterModel.findOne({productId:productID}).populate('productId')
+        if (!candidate) {
+            throw ApiError.BadRequest(`продукт с таким именем:${productID} не зарегистрирован`,)
         }
-        if(type === "technique"){
-            const candidate = await TechniqueModel.findOne({_id:productID})
-            if (!candidate) {
-                throw ApiError.BadRequest(`продукт с таким именем:${productID} не зарегистрирован`,)
-            }
-            const productDto =  candidate.getData()
-            return {
-                resultCode,
-                messages,
-                data: productDto || null
-            }
+        const productDto = {
+            type:candidate.type,
+            span:candidate.span,
+            data:candidate.productId.getData()
         }
-        if(type === "premium"){
-            const candidate = await PremiumModel.findOne({_id:productID})
-            if (!candidate) {
-                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} не зарегистрирован`,)
-            }
-            const productDto =  candidate.getData()
-            return {
-                resultCode,
-                messages,
-                data: productDto || null
-            }
-        }
-        if(type === "gold"){
-            const candidate = await GoldModel.findOne({_id:productID})
-            if (!candidate) {
-                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} не зарегистрирован`,)
-            }
-            const productDto =  candidate.getData()
-            return {
-                resultCode,
-                messages,
-                data: productDto || null
-            }
-        }
-        if(type === "provisions"){
-            const candidate = await ProvisionsModel.findOne({_id:productID})
-            if (!candidate) {
-                throw ApiError.BadRequest(`продукт с таким именем:${productData.name} не зарегистрирован`,)
-            }
-            const productDto =  candidate.getData()
-            return {
-                resultCode,
-                messages,
-                data: productDto || null
-            }
+        return {
+            resultCode,
+            messages,
+            data: productDto || null
         }
     }
 

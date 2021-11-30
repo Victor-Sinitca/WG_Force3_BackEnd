@@ -22,34 +22,34 @@ class UserController {
             next(e)
         }
     }
-    async setUserData(req, res, next) {
+/*    async setUserData(req, res, next) {
         try {
             const {userID, data} = req.body
-           /* console.log(`id:${userID}`)*/
-            /*console.log(`body:${JSON.stringify(req.body)}`)*/
+           /!* console.log(`id:${userID}`)*!/
+            /!*console.log(`body:${JSON.stringify(req.body)}`)*!/
             const userData = await userService.setUserData(userID,data)
             await res.json(userData)
         } catch (e) {
             next(e)
         }
-    }
+    }*/
     async setUserWishlist(req, res, next) {
         try {
-            const {userID, data}=req.body
+            const {userId, productId}=req.body
             /*console.log(`id:${userID}`)*/
            /* console.log(`body:${JSON.stringify(req.body)}`)*/
-            const userData = await userService.setUserWishlist(userID,data)
+            const userData = await userService.setUserWishlist(userId,productId)
             await res.json(userData)
         } catch (e) {
             next(e)
         }
     }
-    async setUserShopping(req, res, next) {
+    async setUserPurchase(req, res, next) {
         try {
-            const {userID, data}=req.body
+            const {userId, productId, isAdd}=req.body
            /* console.log(`id:${userID}`)*/
            /* console.log(`body:${JSON.stringify(req.body)}`)*/
-            const userData = await userService.setUserShopping(userID,data)
+            const userData = await userService.setUserPurchase(userId,productId,isAdd)
             await res.json(userData)
         } catch (e) {
             next(e)

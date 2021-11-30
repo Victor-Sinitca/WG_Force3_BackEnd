@@ -11,20 +11,6 @@ class ProductController {
             next(e)
         }
     }
-
-    async addManyProducts(req, res, next) {
-        try {
-            const {data, type} = req.body
-            /* console.log(`addProduct  data:${data}`)*/
-            const products = data.map(async (d) => {
-                return await productService.addProduct(d, type)
-            })
-            await res.json(products)
-        } catch (e) {
-            next(e)
-        }
-    }
-
     async addManyProductsForType(req, res, next) {
         try {
             const {products_vehicles_0, type , products_gold_0, data} = req.body
@@ -145,30 +131,16 @@ class ProductController {
             next(e)
         }
     }
-
     async getOneProduct(req, res, next) {
         try {
-            const {id, type} = req.body
+            const {id} = req.body
             /* console.log(`id:${userId}`)*/
-            const oneProduct = await productService.getOneProduct(id, type)
+            const oneProduct = await productService.getOneProduct(id)
             await res.json(oneProduct)
         } catch (e) {
             next(e)
         }
     }
-
-    async getProducts(req, res, next) {
-        try {
-            const query = req.query
-            /*console.log(`getOneProduct query:${JSON.stringify(query)}`)*/
-            const {page, count, filter} = query
-            const products = await productService.getProducts(page, count, filter)
-            await res.json(products)
-        } catch (e) {
-            next(e)
-        }
-    }
-
     async getProductsOnFilter(req, res, next) {
         try {
             const {filter} = req.body

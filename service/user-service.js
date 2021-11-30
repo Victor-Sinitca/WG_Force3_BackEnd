@@ -43,6 +43,7 @@ class UserService {
             data: userDto
         }
     }
+
     async getUserData(userId) {
         let resultCode = 0
         const messages = []
@@ -55,7 +56,7 @@ class UserService {
         }
     }
 
-    async setUserData(userID, data) {
+/*    async setUserData(userID, data) {
         let resultCode = 0
         const messages = []
         let user = []
@@ -78,16 +79,16 @@ class UserService {
                 data: {}
             }
         }
-        /* const users = await UserModel.find()
+        /!* const users = await UserModel.find()
          return users.map(u=>{
              return new UserDto(u)
-         })*/
+         })*!/
         return {
             resultCode,
             messages,
             data: user[0]
         }
-    }
+    }*/
 
     async setUserWishlist(userID, productID) {
         //при передаче невалидного ID может происходить ошибка неостлеживаемого накопления этих ID в базе
@@ -108,14 +109,14 @@ class UserService {
             }
         }
     }
-    async setUserShopping(userID, productID) {
+    async setUserPurchase(userID, productID, isAdd) {
         //при передаче невалидного ID может происходить ошибка неостлеживаемого накопления этих ID в базе
         // необходимо выполнять периодическую проверку базы данных на наличие валидных ID
         const user = await UserModel.findOne({_id:userID})
         if (!user) throw ApiError.BadRequest(`пользователь с таким userID:${userID} не найден`,)
         let resultCode = 0
         const messages = []
-        let shoppingList = user.setShopping(productID)
+        let shoppingList = user.setPurchase(productID,isAdd)
         await user.save()
         return {
             resultCode,
