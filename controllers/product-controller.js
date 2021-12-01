@@ -133,7 +133,7 @@ class ProductController {
     }
     async getOneProduct(req, res, next) {
         try {
-            const {id} = req.body
+            const {id} = req.query
             /* console.log(`id:${userId}`)*/
             const oneProduct = await productService.getOneProduct(id)
             await res.json(oneProduct)
@@ -153,8 +153,8 @@ class ProductController {
     }
     async getProductsOnFilter(req, res, next) {
         try {
-            const {filter} = req.body
-            console.log(`getProductsOnFilter filter:${filter}`)
+            const {filter} = req.query
+            /*console.log(`getProductsOnFilter filter:${filter}`)*/
             const products = await productService.getProductsOnFilter(filter)
             await res.json(products)
         } catch (e) {

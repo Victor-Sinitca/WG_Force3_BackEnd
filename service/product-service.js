@@ -147,11 +147,20 @@ class ProductService {
         }
     }
 
-    async getProductsOnFilter(filter = []) {
-        if (filter.length === 0) throw ApiError.BadRequest(`фильтр не установлен`)
+    async getProductsOnFilter(filter = "") {
+        if (!filter) throw ApiError.BadRequest(`фильтр не установлен`)
         let resultCode = 0
         const messages = []
-        const products = await FilterModel.find({}).where('filter').in(filter).sort({priority: -1}).populate('productId')
+        let products = []
+        if (filter === "All") {
+            products = await FilterModel.find({}).sort({priority: -1}).populate('productId')
+        } else if (filter === "Technique" || filter === "Premium" || filter === "Gold" || filter === "Provisions") {
+            products = await FilterModel.find({}).where('filter').in([filter]).sort({priority: -1}).populate('productId')
+        } else {
+            resultCode = 1
+            messages.push(`filter:${filter} must be "Technique" or "Premium"  or "Gold"  or "Provisions"`)
+        }
+
         /* console.log(products)*/
         const productDto = products.map((p) => {
             return {

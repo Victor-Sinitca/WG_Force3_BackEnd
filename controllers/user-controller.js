@@ -13,7 +13,7 @@ class UserController {
     }
     async getUserData(req, res, next) {
         try {
-            const {id:userId}=req.params
+            const {id:userId}=req.query
 
            /* console.log(`id:${userId}`)*/
             const userData = await userService.getUserData(userId)

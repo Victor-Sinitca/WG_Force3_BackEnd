@@ -27,8 +27,8 @@
 
 
 <h3>Get user by ID</h3>
-<p>query string address: /user/id</p>
-<p>request id:"string" <br>example: /user/61a6286353b5dad92e57b4c0</p>
+<p>query string address: /user?id=string</p>
+<p>request id:"string" <br>example: /user?id=61a6286353b5dad92e57b4c0</p>
 <pre>response data: {
         resultCode: 0 | 1,
         messages: [string],
@@ -41,8 +41,8 @@
 }</pre>
 
 <h3>Get product by ID</h3>
-<p>query string address: /product</p>
-<pre>request data: {id:"string"} <br> example: {id:"61a61eb74ef1f443c0cb654e"}</pre>
+<p>query string address: /product?id=string</p>
+<pre>request id:"string" <br> example: /product?id=61a61eb74ef1f443c0cb654e</pre>
 <pre>response data:{
         resultCode: 0 | 1,
         messages: [string],
@@ -98,11 +98,11 @@
 
 
 <h3>Get products by filter</h3>
-<p>query string address: /product/filter</p>
-<p>request data: {"filter":["string"]}
-    <br> example:{"filter":["Technique"]}.
-    <br> Request ALL :{"filter":["Technique", "Premium", "Gold", "Provisions"]} }
-    <br> some filter: "Technique", "Premium", "Gold", "Provisions" </p>
+<p>query string address: /product?filter=string</p>
+<p>request filter =string
+    <br> example: /product?filter=Technique
+    <br> filter= "Technique", "Premium", "Gold", "Provisions","All"
+
 <pre>response data:{
         resultCode: 0 | 1,
         messages: [string],
@@ -156,19 +156,7 @@
         },
 }</pre>
 
-<h3>Get products by list</h3>
-<p>query string address: /products</p>
-<p>request data: {"listProductsId":[string]}
-    <br> example:{"listProductsId":["61a61a5138f1fb7fb25fde75","61a61a5138f1fb7fb25fde73", "61a61eb74ef1f443c0cb654e"]}</p>
-<pre>response data: {
-        resultCode: 0 | 1,
-        messages: [string],
-        data: [{
-                type:string,
-                span:number,
-                data: [productData]
-        }]
-} </pre>
+
 
 
 
@@ -190,6 +178,19 @@
         }
 } </pre>
 
+<h3>Get products by list</h3>
+<p>query string address: /products</p>
+<p>request data: {"listProductsId":[string]}
+    <br> example:{"listProductsId":["61a61a5138f1fb7fb25fde75","61a61a5138f1fb7fb25fde73", "61a61eb74ef1f443c0cb654e"]}</p>
+<pre>response data: {
+        resultCode: 0 | 1,
+        messages: [string],
+        data: [{
+                type:string,
+                span:number,
+                data: [productData]
+        }]
+} </pre>
 
 <h3>Change wishlist</h3>
 <p>query string address: /user/wishlist </p>

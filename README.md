@@ -28,3 +28,6 @@ You will also see any lint errors in the console.
 ## To view the endpoints
 
 Open [http://localhost:7000/doc](http://localhost:7000/doc)
+
+
+https://wg-force3-backend.herokuapp.com/doc.html
