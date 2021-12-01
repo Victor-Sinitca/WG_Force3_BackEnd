@@ -4,15 +4,18 @@ const productController = require(`../controllers/product-controller`)
 
 const router = new Router()
 
-
-router.get(`/user`,userController.getUserData)
 router.get(`/users`,userController.getAllUsers)
-router.get(`/product/filter`,productController.getProductsOnFilter)
+
+router.get(`/user/:id`,userController.getUserData)
+
+
 router.get(`/product`,productController.getOneProduct)
 router.get(`/products`,productController.getProductsByList)
 
 
+
 router.post(`/products` , productController.addManyProductsForType)
+router.post(`/product/filter`,productController.getProductsOnFilter)
 
 router.post(`/product` , productController.addProduct)
 
