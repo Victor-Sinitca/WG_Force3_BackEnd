@@ -22,6 +22,14 @@ class UserController {
             next(e)
         }
     }
+    async getAllUsers(req, res, next) {
+        try {
+            const userData = await userService.getAllUsers()
+            await res.json(userData)
+        } catch (e) {
+            next(e)
+        }
+    }
 /*    async setUserData(req, res, next) {
         try {
             const {userID, data} = req.body

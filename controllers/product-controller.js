@@ -141,6 +141,16 @@ class ProductController {
             next(e)
         }
     }
+    async getProductsByList(req, res, next) {
+        try {
+            const {listProductsId} = req.body
+            /* console.log(`listProductsId:${listProductsId}`)*/
+            const products = await productService.getProductsByList(listProductsId)
+            await res.json(products)
+        } catch (e) {
+            next(e)
+        }
+    }
     async getProductsOnFilter(req, res, next) {
         try {
             const {filter} = req.body

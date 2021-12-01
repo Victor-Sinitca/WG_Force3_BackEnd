@@ -1,27 +1,3 @@
-/*const UserModel = require(`../models/user-model`)
-const UserDto = require(`../dtos/user-dto`)*/
-users = [
-    {
-        userID: "1",
-        wishlist: ["1", "8", "7"],
-        shopping: ["2", "6"],
-    },
-    {
-        userID: "2",
-        wishlist: ["2", "7"],
-        shopping: ["5", "3", "1"],
-    },
-    {
-        userID: "3",
-        wishlist: ["4"],
-        shopping: ["1", "3"],
-    },
-    {
-        userID: "4",
-        wishlist: ["1", "8"],
-        shopping: ["5", "10"],
-    },
-]
 const UserModel = require(`../models/user-model`)
 const ApiError = require(`../exceptions/api-error`)
 
@@ -31,10 +7,18 @@ class UserService {
     async addUser(name) {
         let resultCode = 0
         const messages = []
-        const candidate = await UserModel.findOne({name})
-        if (candidate) {
-            throw ApiError.BadRequest(`пользователь с таким email:${name} уже зарегистрирован`,)
+        if(typeof name !== "string"){
+            resultCode = 1
+            messages.push(`username:${name} must be a string`)
+            return {
+                resultCode,
+                messages,
+                data: null
+            }
         }
+        const candidate = await UserModel.findOne({name})
+        if (candidate)  throw ApiError.BadRequest(`пользователь с таким name:${name} уже зарегистрирован`,)
+
         const user = await UserModel.create({name,wishlist:[],shoppingList:[]})
         const userDto = user.getUser()
         return {
@@ -47,7 +31,18 @@ class UserService {
     async getUserData(userId) {
         let resultCode = 0
         const messages = []
+        if(typeof userId !== "string"){
+            resultCode = 1
+            messages.push(`userId:${userId} must be a string`)
+            return {
+                resultCode,
+                messages,
+                data: null
+            }
+        }
         const user = await UserModel.findOne({_id:userId})
+        if (!user) throw ApiError.BadRequest(`user with that id:${userId} in not found`)
+
         const userDto=user.getUser()
         return {
             resultCode,
@@ -55,51 +50,49 @@ class UserService {
             data: userDto
         }
     }
-
-/*    async setUserData(userID, data) {
+    async getAllUsers() {
         let resultCode = 0
         const messages = []
-        let user = []
-        users.forEach(value => {
-            if (value.userID === userID) {
-                value.shopping = data.shopping
-                value.wishlist = data.wishlist
-                user.push(value)
-            }
-        })
-        if (user.length === 0 || user.length > 1) {
-            resultCode = 1
-            if (user.length === 0) messages.push("user with passed id not found")
-            if (user.length > 1) messages.push("there are several user with the same id")
-        }
-        if (resultCode) {
-            return {
-                resultCode,
-                messages,
-                data: {}
-            }
-        }
-        /!* const users = await UserModel.find()
-         return users.map(u=>{
-             return new UserDto(u)
-         })*!/
+        const users = await UserModel.find({})
+        if (!users) throw ApiError.BadRequest(`users not found`)
+
+        const userDto=[]
+        users.forEach(user=> userDto.push(user.getUser())  )
         return {
             resultCode,
             messages,
-            data: user[0]
+            data: userDto
         }
-    }*/
+    }
 
-    async setUserWishlist(userID, productID) {
+    async setUserWishlist(userId, productId) {
         //при передаче невалидного ID может происходить ошибка неостлеживаемого накопления этих ID в базе
         // необходимо выполнять периодическую проверку базы данных на наличие валидных ID
        /* console.log(typeof userID)*/
-        const user = await UserModel.findOne({_id:userID})
-       /* console.log(user)*/
-        if (!user) throw ApiError.BadRequest(`пользователь с таким userID:${userID} не найден`,)
         let resultCode = 0
         const messages = []
-        let wishlist = user.setWish(productID)
+        if(typeof userId !== "string"){
+            resultCode = 1
+            messages.push(`userId:${userId} must be a string`)
+            return {
+                resultCode,
+                messages,
+                data: null
+            }
+        }
+        if(typeof productId !== "string"){
+            resultCode = 1
+            messages.push(`productId:${productId} must be a string`)
+            return {
+                resultCode,
+                messages,
+                data: null
+            }
+        }
+
+        const user = await UserModel.findOne({_id:userId})
+        if (!user) throw ApiError.BadRequest(`user with that id:${userId} in not found`)
+        let wishlist = user.setWish(productId)
         await user.save()
         return {
             resultCode,
@@ -109,14 +102,33 @@ class UserService {
             }
         }
     }
-    async setUserPurchase(userID, productID, isAdd) {
+
+    async setUserPurchase(userId, productId, isAdd=true) {
         //при передаче невалидного ID может происходить ошибка неостлеживаемого накопления этих ID в базе
         // необходимо выполнять периодическую проверку базы данных на наличие валидных ID
-        const user = await UserModel.findOne({_id:userID})
-        if (!user) throw ApiError.BadRequest(`пользователь с таким userID:${userID} не найден`,)
         let resultCode = 0
         const messages = []
-        let shoppingList = user.setPurchase(productID,isAdd)
+        if(typeof userId !== "string"){
+            resultCode = 1
+            messages.push(`userId:${userId} must be a string`)
+            return {
+                resultCode,
+                messages,
+                data: null
+            }
+        }
+        if(typeof productId !== "string"){
+            resultCode = 1
+            messages.push(`productId:${productId} must be a string`)
+            return {
+                resultCode,
+                messages,
+                data: null
+            }
+        }
+        const user = await UserModel.findOne({_id:userId})
+        if (!user) throw ApiError.BadRequest(`пользователь с таким userID:${userId} не найден`,)
+        let shoppingList = user.setPurchase(productId,isAdd)
         await user.save()
         return {
             resultCode,

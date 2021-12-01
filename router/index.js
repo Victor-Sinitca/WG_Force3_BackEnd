@@ -6,8 +6,10 @@ const router = new Router()
 
 
 router.get(`/user`,userController.getUserData)
+router.get(`/users`,userController.getAllUsers)
 router.get(`/product/filter`,productController.getProductsOnFilter)
 router.get(`/product`,productController.getOneProduct)
+router.get(`/products`,productController.getProductsByList)
 
 
 router.post(`/products` , productController.addManyProductsForType)
