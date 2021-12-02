@@ -1,8 +1,40 @@
-const {Schema, model} = require(`mongoose`)
+import { Schema , model} from 'mongoose';
 
-const PremiumScheme = new Schema({
+
+type TechniqueSchemeType={
+    id: string,
+    name: string,
+    description: string,
+    filter: {
+        nation: string,
+        type: string,
+        tier: string
+    },
+    price: {
+        basic: {
+            cost: string,
+            currency: string,
+        },
+        actual: {
+            cost: string,
+            currency: string,
+        },
+    },
+    images: {
+        span_1x1: string,
+        span_2x1: string,
+    },
+}
+
+
+const TechniqueScheme = new Schema({
     name: {type: String, require: true},
     description: {type: String, require: true},
+    filter: {
+        nation: {type: String, require: true},
+        type: {type: String, require: true},
+        tier: {type: String, require: true},
+    },
     price: {
         basic: {
             cost: {type: String, require: true},
@@ -18,13 +50,16 @@ const PremiumScheme = new Schema({
         span_2x1: {type: String, default: null},
     },
 })
-
-
-PremiumScheme.methods.getData = function () {
+TechniqueScheme.methods.getData = function ():TechniqueSchemeType {
     return {
         id: this._id,
         name: this.name,
         description: this.description,
+        filter: {
+            nation: this.filter.nation,
+            type: this.filter.type,
+            tier: this.filter.tier
+        },
         price: {
             basic: {
                 cost: this.price.basic.cost,
@@ -41,5 +76,7 @@ PremiumScheme.methods.getData = function () {
         },
     }
 };
-module.exports = model("Premium", PremiumScheme)
+
+
+module.exports = model("Technique", TechniqueScheme)
 

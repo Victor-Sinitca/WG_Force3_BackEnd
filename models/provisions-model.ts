@@ -1,5 +1,24 @@
-const {Schema, model} = require(`mongoose`)
+import { Schema , model} from 'mongoose';
 
+export type ProductSchemeType={
+    id: string,
+    name: string,
+    description: string,
+    price: {
+        basic: {
+            cost: string,
+            currency: string,
+        },
+        actual: {
+            cost: string,
+            currency: string,
+        },
+    },
+    images: {
+        span_1x1: string,
+        span_2x1: string,
+    },
+}
 
 const ProvisionsScheme = new Schema({
     name: {type: String, require: true},
@@ -21,7 +40,7 @@ const ProvisionsScheme = new Schema({
 })
 
 
-ProvisionsScheme.methods.getData = function () {
+ProvisionsScheme.methods.getData = function ():ProductSchemeType {
     return {
         id: this._id,
         name: this.name,

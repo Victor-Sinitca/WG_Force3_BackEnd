@@ -1,5 +1,11 @@
-const {Schema, model} = require(`mongoose`)
+import { Schema , model} from 'mongoose';
 
+type FilterSchemeType={
+    id: string,
+    type: string,
+    priority: number,
+    filter:Array<string>
+}
 
 const FilterScheme = new Schema({
     productId:{type:Schema.Types.ObjectId,require: true, refPath: 'type'},
@@ -14,7 +20,7 @@ const FilterScheme = new Schema({
     span:{type: Number, min: 1, default:1,}
 })
 
-FilterScheme.methods.getData = function () {
+FilterScheme.methods.getData = function ():FilterSchemeType {
     return {
         id: this._id,
         type: this.type,

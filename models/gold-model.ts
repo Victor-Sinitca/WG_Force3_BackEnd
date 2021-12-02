@@ -1,20 +1,41 @@
-const {Schema, model} = require(`mongoose`)
+import {ProductSchemeType} from "./provisions-model";
+import { Schema , model} from 'mongoose';
 
-const TechniqueScheme = new Schema({
+
+type BasicType ={
+    cost: string,
+    currency?: string,
+}
+type ActualType ={
+    cost?: string,
+    currency?: string,
+}
+type PriceType={
+    basic: BasicType,
+    actual: ActualType,
+}
+
+
+interface Gold {
+    name: string,
+    description: string,
+    price:  PriceType,
+    images: {
+        span_1x1: string,
+        span_2x1?: string | null ,
+    },
+}
+
+const GoldScheme = new Schema<Gold>({
     name: {type: String, require: true},
     description: {type: String, require: true},
-    filter: {
-        nation: {type: String, require: true},
-        type: {type: String, require: true},
-        tier: {type: String, require: true},
-    },
     price: {
         basic: {
             cost: {type: String, require: true},
             currency: {type: String, default: "$",},
         },
         actual: {
-            cost: {type: String, default: 0,},
+            cost: {type: String, default: "0",},
             currency: {type: String, default: "$",},
         },
     },
@@ -23,16 +44,12 @@ const TechniqueScheme = new Schema({
         span_2x1: {type: String, default: null},
     },
 })
-TechniqueScheme.methods.getData = function () {
+
+GoldScheme.methods.getData = function ():ProductSchemeType {
     return {
         id: this._id,
         name: this.name,
         description: this.description,
-        filter: {
-            nation: this.filter.nation,
-            type: this.filter.type,
-            tier: this.filter.tier
-        },
         price: {
             basic: {
                 cost: this.price.basic.cost,
@@ -50,6 +67,6 @@ TechniqueScheme.methods.getData = function () {
     }
 };
 
+module.exports = model<Gold>("Gold", GoldScheme)
 
-module.exports = model("Technique", TechniqueScheme)
 

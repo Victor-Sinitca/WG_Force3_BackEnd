@@ -1,7 +1,8 @@
-const {Schema, model} = require(`mongoose`)
+import {ProductSchemeType} from "./provisions-model";
+import { Schema , model} from 'mongoose';
 
 
-const GoldScheme = new Schema({
+const PremiumScheme = new Schema({
     name: {type: String, require: true},
     description: {type: String, require: true},
     price: {
@@ -20,7 +21,8 @@ const GoldScheme = new Schema({
     },
 })
 
-GoldScheme.methods.getData = function () {
+
+PremiumScheme.methods.getData = function ():ProductSchemeType {
     return {
         id: this._id,
         name: this.name,
@@ -41,7 +43,5 @@ GoldScheme.methods.getData = function () {
         },
     }
 };
-
-module.exports = model("Gold", GoldScheme)
-
+module.exports = model("Premium", PremiumScheme)
 

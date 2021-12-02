@@ -1,9 +1,9 @@
 const ApiError = require(`../exceptions/api-error`)
-const TechniqueModel = require(`../models/technique-model`)
-const PremiumModel = require(`../models/premium-model`)
-const GoldModel = require(`../models/gold-model`)
-const ProvisionsModel = require(`../models/provisions-model`)
-const FilterModel = require(`../models/filter-model`)
+const TechniqueModel = require(`models/technique-model`)
+const PremiumModel = require(`models/premium-model`)
+const GoldModel = require(`models/gold-model`)
+const ProvisionsModel = require(`models/provisions-model`)
+const FilterModel = require(`models/filter-model`)
 
 const type = ["string", "bigint", "boolean", "number", "object", "symbol", "undefined", "function"]
 
