@@ -1,32 +1,10 @@
-import {ProductSchemeType} from "./provisions-model";
-import { Schema , model} from 'mongoose';
+import {Schema, model, Document} from 'mongoose';
+import {ProductDocumentType} from "./provisions-model";
 
 
-type BasicType ={
-    cost: string,
-    currency?: string,
-}
-type ActualType ={
-    cost?: string,
-    currency?: string,
-}
-type PriceType={
-    basic: BasicType,
-    actual: ActualType,
-}
 
 
-interface Gold {
-    name: string,
-    description: string,
-    price:  PriceType,
-    images: {
-        span_1x1: string,
-        span_2x1?: string | null ,
-    },
-}
-
-const GoldScheme = new Schema<Gold>({
+const GoldScheme: Schema<ProductDocumentType> = new Schema({
     name: {type: String, require: true},
     description: {type: String, require: true},
     price: {
@@ -45,7 +23,7 @@ const GoldScheme = new Schema<Gold>({
     },
 })
 
-GoldScheme.methods.getData = function ():ProductSchemeType {
+GoldScheme.methods.getData = function (){
     return {
         id: this._id,
         name: this.name,
@@ -66,7 +44,8 @@ GoldScheme.methods.getData = function ():ProductSchemeType {
         },
     }
 };
+const GoldModel = model<ProductDocumentType>("Gold", GoldScheme);
+export default GoldModel;
 
-module.exports = model<Gold>("Gold", GoldScheme)
 
 

@@ -1,6 +1,6 @@
-import { Schema , model} from 'mongoose';
+import {Schema, model, Document} from 'mongoose';
 
-export type ProductSchemeType={
+export interface ProductDataType {
     id: string,
     name: string,
     description: string,
@@ -20,7 +20,32 @@ export type ProductSchemeType={
     },
 }
 
-const ProvisionsScheme = new Schema({
+export interface ProductSchemaType {
+    productId: string,
+    name: string,
+    description: string,
+    price: {
+        basic: {
+            cost: string,
+            currency?: string,
+        },
+        actual: {
+            cost?: string,
+            currency?: string,
+        },
+    },
+    images: {
+        span_1x1: string,
+        span_2x1?: string |null,
+    },
+}
+
+export interface ProductDocumentType extends ProductSchemaType, Document {
+    getData: () => ProductDataType;
+}
+
+
+const ProvisionsScheme: Schema<ProductDocumentType>  = new Schema({
     name: {type: String, require: true},
     description: {type: String, require: true},
     price: {
@@ -40,7 +65,7 @@ const ProvisionsScheme = new Schema({
 })
 
 
-ProvisionsScheme.methods.getData = function ():ProductSchemeType {
+ProvisionsScheme.methods.getData = function () {
     return {
         id: this._id,
         name: this.name,
@@ -61,6 +86,9 @@ ProvisionsScheme.methods.getData = function ():ProductSchemeType {
         },
     }
 };
-module.exports = model("Provisions", ProvisionsScheme)
+
+const ProvisionsModel = model<ProductDocumentType>("Provisions", ProvisionsScheme);
+export default ProvisionsModel;
+
 
 

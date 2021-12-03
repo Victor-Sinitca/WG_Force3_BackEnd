@@ -1,8 +1,8 @@
-import {ProductSchemeType} from "./provisions-model";
+import {ProductDocumentType} from "./provisions-model";
 import { Schema , model} from 'mongoose';
 
 
-const PremiumScheme = new Schema({
+const PremiumScheme: Schema<ProductDocumentType> = new Schema({
     name: {type: String, require: true},
     description: {type: String, require: true},
     price: {
@@ -22,7 +22,7 @@ const PremiumScheme = new Schema({
 })
 
 
-PremiumScheme.methods.getData = function ():ProductSchemeType {
+PremiumScheme.methods.getData = function () {
     return {
         id: this._id,
         name: this.name,
@@ -43,5 +43,7 @@ PremiumScheme.methods.getData = function ():ProductSchemeType {
         },
     }
 };
-module.exports = model("Premium", PremiumScheme)
+const PremiumModel = model<ProductDocumentType>("Premium", PremiumScheme);
+export default PremiumModel;
+
 

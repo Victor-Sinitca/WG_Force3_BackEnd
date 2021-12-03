@@ -1,33 +1,30 @@
-import { Schema , model} from 'mongoose';
+import {Schema, model, Document} from 'mongoose';
+import {ProductDataType, ProductDocumentType, ProductSchemaType} from "./provisions-model";
 
 
-type TechniqueSchemeType={
-    id: string,
-    name: string,
-    description: string,
+export interface TechniqueDataType extends ProductDataType{
     filter: {
         nation: string,
         type: string,
-        tier: string
-    },
-    price: {
-        basic: {
-            cost: string,
-            currency: string,
-        },
-        actual: {
-            cost: string,
-            currency: string,
-        },
-    },
-    images: {
-        span_1x1: string,
-        span_2x1: string,
+        tier: string,
     },
 }
 
+export interface TechniqueSchemaType extends ProductSchemaType {
+    filter: {
+        nation: string,
+        type: string,
+        tier: string,
+    },
+}
 
-const TechniqueScheme = new Schema({
+export interface TechniqueDocumentType extends TechniqueSchemaType, Document {
+    getData: () => TechniqueDataType;
+}
+
+
+
+const TechniqueScheme: Schema<TechniqueDocumentType> = new Schema({
     name: {type: String, require: true},
     description: {type: String, require: true},
     filter: {
@@ -50,7 +47,7 @@ const TechniqueScheme = new Schema({
         span_2x1: {type: String, default: null},
     },
 })
-TechniqueScheme.methods.getData = function ():TechniqueSchemeType {
+TechniqueScheme.methods.getData = function (){
     return {
         id: this._id,
         name: this.name,
@@ -77,6 +74,7 @@ TechniqueScheme.methods.getData = function ():TechniqueSchemeType {
     }
 };
 
+const TechniqueModel = model<TechniqueDocumentType>("Technique", TechniqueScheme);
+export default TechniqueModel;
 
-module.exports = model("Technique", TechniqueScheme)
 

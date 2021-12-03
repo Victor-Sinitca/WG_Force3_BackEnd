@@ -1,6 +1,5 @@
-const UserModel = require(`models/user-model`)
-const ApiError = require(`../exceptions/api-error`)
-
+import {ApiError} from "../exceptions/api-error";
+import UserModel from "../models/user-model";
 
 class UserService {
     async addUser(name: string) {
@@ -140,4 +139,4 @@ class UserService {
     }
 }
 
-module.exports = new UserService()
+export default  new UserService()

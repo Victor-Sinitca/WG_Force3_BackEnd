@@ -1,14 +1,18 @@
-require("dotenv").config()
-const express = require("express")
-const router = require(`./router/index`)
-const cors = require('cors')
-const bodyParser = require('body-parser')
-const errorHandler = require('errorhandler');
+import dotenv from "dotenv";
+import express from "express";
+import {router} from "./router";
+import cors from "cors";
+import bodyParser from "body-parser";
+import errorHandler from "errorhandler";
+import mongoose from "mongoose";
 
-const mongoose = require('mongoose');
-mongoose.promise = global.Promise;
 
-const errorMiddleware = require(`./middlewares/error-middleware`)
+
+
+mongoose.Promise = global.Promise;
+dotenv.config();
+
+const errorMiddleware = require(`middlewares/error-middleware`)
 
 
 const PORT = process.env.PORT || 8000
@@ -29,7 +33,6 @@ app.use(bodyParser.urlencoded({
 }))
 app.use(bodyParser.json({
     type: 'application/json',
-    parameterLimit: 100000,
     limit: '50mb'
 }))
 app.use(`/api`, router)
@@ -48,12 +51,12 @@ app.use(errorMiddleware) // !!должен быть последним middlewar
 const start = async () => {
     try {
         //Configure Mongoose
-        await mongoose.connect(process.env.BD_URL, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
+        await mongoose.connect(process.env.BD_URL || "some url address DB", {
+           /* useNewUrlParser: true,*/
+           /* useUnifiedTopology: true,*/
             user:"root",
             pass:"1986"
-        },function(error) {
+        },function(error:any) {
             if(error) console.log(`error  mongoose.connect : ${error}`)
         });
         await  mongoose.set('debug', true);

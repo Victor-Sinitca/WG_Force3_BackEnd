@@ -1,27 +1,31 @@
-import { Schema , model} from 'mongoose';
+import { Schema ,Document, model} from 'mongoose';
 
-
-type UserSchemaType={
-    name: string,
-    wishlist: Array<string>,
-    shoppingList: Array<string>,
-}
-
-export type UserDataType={
+export interface UserDataType{
     id: string,
     name: string,
     wishlist: Array<string>,
     shoppingList: Array<string>,
 }
 
+interface UserSchemaType{
+    name: string,
+    wishlist: Array<string>,
+    shoppingList: Array<string>,
+}
+interface UserDocumentType extends UserSchemaType, Document {
+    getUser: () => UserDataType;
+    setWish: (wishId:string) => UserDataType;
+    setPurchase: (shoppingId:string, isAdd:boolean) => UserDataType;
+}
 
-const UserScheme = new Schema<UserSchemaType>({
+
+const UserScheme: Schema<UserDocumentType> = new Schema<UserSchemaType>({
     name: {type: String, require: true},
     wishlist: [{type: String, require: true}],
     shoppingList: [{type: String, require: true}],
 })
 
-UserScheme.methods.getUser = function ():UserDataType {
+UserScheme.methods.getUser = function () {
     return {
         id: this._id,
         name: this.name,
@@ -29,7 +33,7 @@ UserScheme.methods.getUser = function ():UserDataType {
         shoppingList: this.shoppingList,
     }
 };
-UserScheme.methods.setWish = function (wishId:string):UserDataType {
+UserScheme.methods.setWish = function (wishId:string) {
     const length = this.wishlist.length
     this.wishlist = this.wishlist.filter((value:string) => value !== wishId)
     if(this.wishlist.length === length) this.wishlist.push(wishId)
@@ -40,7 +44,7 @@ UserScheme.methods.setWish = function (wishId:string):UserDataType {
         shoppingList: this.shoppingList,
     }
 };
-UserScheme.methods.setPurchase = function (shoppingId:string, isAdd:boolean):UserDataType {
+UserScheme.methods.setPurchase = function (shoppingId:string, isAdd:boolean){
     const purchaseIsAdd = this.shoppingList.includes(shoppingId)
     if(purchaseIsAdd && !isAdd){
         this.shoppingList = this.shoppingList.filter((value:string) => value !== shoppingId)
@@ -57,5 +61,8 @@ UserScheme.methods.setPurchase = function (shoppingId:string, isAdd:boolean):Use
     }
 };
 
-module.exports = model("User", UserScheme)
+
+const UserModel = model<UserDocumentType>('User', UserScheme);
+export default UserModel;
+
 
