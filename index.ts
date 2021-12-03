@@ -5,6 +5,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import errorHandler from "errorhandler";
 import mongoose from "mongoose";
+import errorMiddleware from "./middlewares/error-middleware"
 
 
 
@@ -12,7 +13,7 @@ import mongoose from "mongoose";
 mongoose.Promise = global.Promise;
 dotenv.config();
 
-const errorMiddleware = require(`middlewares/error-middleware`)
+/*const errorMiddleware = require(`middlewares/error-middleware`)*/
 
 
 const PORT = process.env.PORT || 8000
