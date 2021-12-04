@@ -6,7 +6,6 @@ export interface UserDataType{
     wishlist: Array<string>,
     shoppingList: Array<string>,
 }
-
 interface UserSchemaType{
     name: string,
     wishlist: Array<string>,
@@ -51,7 +50,6 @@ UserScheme.methods.setPurchase = function (shoppingId:string, isAdd:boolean){
     }
     if(!purchaseIsAdd && isAdd){
         this.shoppingList.push(shoppingId)
-
     }
     return {
         id: this._id,
@@ -60,7 +58,6 @@ UserScheme.methods.setPurchase = function (shoppingId:string, isAdd:boolean){
         shoppingList: this.shoppingList,
     }
 };
-
 
 const UserModel = model<UserDocumentType>('User', UserScheme);
 export default UserModel;

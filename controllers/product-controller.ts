@@ -1,13 +1,27 @@
 import ProductService from "../service/product-service"
+import * as express from "express";
 import {FilterType} from "../type/dataType";
 import {TechniqueSchemaType} from "../models/technique-model";
 
+type getProductsByListBodyType={
+    listProductsId:Array<string>
+}
+type AddProductBodyType={
+    data: TechniqueSchemaType;
+    type: FilterType
+}
+type getOneProductQueryType={
+    id: string
+}
+type getProductsOnFilterQueryType={
+    filter: string
+}
 
 
 class ProductController {
-    async addProduct(req:any, res:any, next:any) {
+    async addProduct(req: express.Request<{}, {}, AddProductBodyType,{} >, res: express.Response, next:any) {
         try {
-            const {data, type}: { data: TechniqueSchemaType; type: FilterType } = req.body
+            const {data, type} = req.body
             /* console.log(`addProduct  data:${data}`)*/
             const oneProduct = await  ProductService.addProduct(data, type)
             await res.json(oneProduct)
@@ -15,7 +29,7 @@ class ProductController {
             next(e)
         }
     }
-    async getOneProduct(req:any, res:any, next:any) {
+    async getOneProduct(req: express.Request<{}, {}, {}, getOneProductQueryType>, res: express.Response, next:any) {
         try {
             const {id} = req.query
             /* console.log(`id:${userId}`)*/
@@ -25,7 +39,7 @@ class ProductController {
             next(e)
         }
     }
-    async getProductsByList(req:any, res:any, next:any) {
+    async getProductsByList(req: express.Request<{}, {}, getProductsByListBodyType, {}>, res: express.Response, next:any) {
         try {
             const {listProductsId} = req.body
             /* console.log(`listProductsId:${listProductsId}`)*/
@@ -35,7 +49,7 @@ class ProductController {
             next(e)
         }
     }
-    async getProductsOnFilter(req:any, res:any, next:any) {
+    async getProductsOnFilter(req: express.Request<{}, {}, {},getProductsOnFilterQueryType>, res: express.Response, next:any) {
         try {
             const {filter} = req.query
             /*console.log(`getProductsOnFilter filter:${filter}`)*/
