@@ -2,12 +2,15 @@
   "name": "wg_force3_backend",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "index.js",
   "scripts": {
+    "build": "dist && tsc",
     "start": "tsc && node dist/index.js",
+    "start:dev": "node dist/index.js",
     "dev": "nodemon ",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "heroku-postbuild": "npm run build"
+    "heroku-postbuild": "npm run build",
+    "postinstall": "npm run build"
   },
   "author": "",
   "license": "ISC",
