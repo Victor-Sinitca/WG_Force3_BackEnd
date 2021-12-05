@@ -1,11 +1,7 @@
 import { Schema ,Document, model} from 'mongoose';
+import {UserDataType} from "../type/dataType";
 
-export interface UserDataType{
-    id: string,
-    name: string,
-    wishlist: Array<string>,
-    shoppingList: Array<string>,
-}
+
 interface UserSchemaType{
     name: string,
     wishlist: Array<string>,

@@ -1,10 +1,10 @@
 import FilterModel from "../models/filter-model";
 import GoldModel from "../models/gold-model";
 import PremiumModel from "../models/premium-model";
-import TechniqueModel, {TechniqueDataType, TechniqueDocumentType, TechniqueSchemaType} from "../models/technique-model";
-import ProvisionsModel, {ProductDataType, ProductSchemaType} from "../models/provisions-model";
+import TechniqueModel, {TechniqueDocumentType, TechniqueSchemaType} from "../models/technique-model";
+import ProvisionsModel, {ProductSchemaType} from "../models/provisions-model";
 import {ApiError} from "../exceptions/api-error";
-import {FilterType} from "../type/dataType";
+import {FilterType, ProductDataType, TechniqueDataType} from "../type/dataType";
 
 
 const type = ["string", "bigint", "boolean", "number", "object", "symbol", "undefined", "function"]

@@ -1,24 +1,5 @@
 import {Schema, model, Document} from 'mongoose';
-
-export interface ProductDataType {
-    id: string,
-    name: string,
-    description: string,
-    price: {
-        basic: {
-            cost: string,
-            currency: string,
-        },
-        actual: {
-            cost: string,
-            currency: string,
-        },
-    },
-    images: {
-        span_1x1: string,
-        span_2x1: string,
-    },
-}
+import {ProductDataType} from "../type/dataType";
 
 export interface ProductSchemaType {
     productId: string,

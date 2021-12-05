@@ -1,18 +1,6 @@
 import {Schema, model, Document,Types} from 'mongoose';
 import {FilterType} from "../type/dataType";
 
-interface  ProductType {
-    productId: string,
-    name:string,
-    type: string,
-    priority: number,
-    filter:Array<string>
-    images: {
-        span_1x1: string,
-        span_2x1?: string |null,
-    },
-}
-
 interface  FilterDataType {
     id: string,
     type: string,

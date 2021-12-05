@@ -1,14 +1,7 @@
 import {Schema, model, Document} from 'mongoose';
-import {ProductDataType, ProductDocumentType, ProductSchemaType} from "./provisions-model";
+import {ProductSchemaType} from "./provisions-model";
+import {TechniqueDataType} from "../type/dataType";
 
-
-export interface TechniqueDataType extends ProductDataType{
-    filter: {
-        nation: string,
-        type: string,
-        tier: string,
-    },
-}
 
 export interface TechniqueSchemaType extends ProductSchemaType {
     filter: {
@@ -21,7 +14,6 @@ export interface TechniqueSchemaType extends ProductSchemaType {
 export interface TechniqueDocumentType extends TechniqueSchemaType, Document {
     getData: () => TechniqueDataType;
 }
-
 
 
 const TechniqueScheme: Schema<TechniqueDocumentType> = new Schema({
@@ -47,7 +39,7 @@ const TechniqueScheme: Schema<TechniqueDocumentType> = new Schema({
         span_2x1: {type: String, default: null},
     },
 })
-TechniqueScheme.methods.getData = function (){
+TechniqueScheme.methods.getData = function () {
     return {
         id: this._id,
         name: this.name,
