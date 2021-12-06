@@ -1,13 +1,14 @@
 import {Schema, model, Document} from 'mongoose';
 import {ProductSchemaType} from "./provisions-model";
-import {TechniqueDataType} from "../type/dataType";
+import {nationType, TechniqueDataType, tierType, typeType} from "../type/dataType";
 
 
 export interface TechniqueSchemaType extends ProductSchemaType {
     filter: {
-        nation: string,
-        type: string,
-        tier: string,
+        nation: nationType,
+        type: typeType,
+        tier: tierType,
+        is_wheeled:boolean
     },
 }
 
@@ -23,6 +24,7 @@ const TechniqueScheme: Schema<TechniqueDocumentType> = new Schema({
         nation: {type: String, require: true},
         type: {type: String, require: true},
         tier: {type: String, require: true},
+        is_wheeled: {type: Boolean, default: false}
     },
     price: {
         basic: {
@@ -30,8 +32,8 @@ const TechniqueScheme: Schema<TechniqueDocumentType> = new Schema({
             currency: {type: String, default: "$",},
         },
         actual: {
-            cost: {type: String, default: 0,},
-            currency: {type: String, default: "$",},
+            cost: {type: String, require: true,},
+            discountType: {type: String, default: "",},
         },
     },
     images: {
@@ -47,7 +49,8 @@ TechniqueScheme.methods.getData = function () {
         filter: {
             nation: this.filter.nation,
             type: this.filter.type,
-            tier: this.filter.tier
+            tier: this.filter.tier,
+            is_wheeled: this.filter.is_wheeled,
         },
         price: {
             basic: {
@@ -56,7 +59,7 @@ TechniqueScheme.methods.getData = function () {
             },
             actual: {
                 cost: this.price.actual.cost,
-                currency: this.price.actual.currency,
+                discountType: this.price.actual.discountType,
             },
         },
         images: {

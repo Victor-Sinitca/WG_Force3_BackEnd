@@ -1,4 +1,4 @@
-type nationType =
+export type nationType =
     "china"
     | "czech"
     | "france"
@@ -10,8 +10,8 @@ type nationType =
     | "uk"
     | "usa"
     | "ussr"
-type typeType = "AT-SPG" | "heavyTank" | "lightTank" | "mediumTank" | "SPG"
-type tierType = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10"
+export type typeType = "AT-SPG" | "heavyTank" | "lightTank" | "mediumTank" | "SPG"
+export type tierType = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10"
 export type FilterType = 'Technique' | 'Premium' | 'Gold' | 'Provisions'
 
 export interface UserDataType {
@@ -32,7 +32,7 @@ export interface ProductDataType {
         },
         actual: {
             cost: string,
-            currency: string,
+            discountType: string,
         },
     },
     images: {
@@ -46,6 +46,7 @@ export interface TechniqueDataType extends ProductDataType {
         nation: nationType,
         type: typeType,
         tier: tierType,
+        is_wheeled:boolean
     },
 }
 

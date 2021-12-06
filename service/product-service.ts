@@ -2,7 +2,7 @@ import FilterModel from "../models/filter-model";
 import GoldModel from "../models/gold-model";
 import PremiumModel from "../models/premium-model";
 import TechniqueModel, {TechniqueDocumentType, TechniqueSchemaType} from "../models/technique-model";
-import ProvisionsModel, {ProductSchemaType} from "../models/provisions-model";
+import ProvisionsModel, {ProductDocumentType, ProductSchemaType} from "../models/provisions-model";
 import {ApiError} from "../exceptions/api-error";
 import {FilterType, ProductDataType, TechniqueDataType} from "../type/dataType";
 
@@ -90,7 +90,7 @@ class ProductService  {
             resultCode = 1
             messages.push("product id not set")
         }
-        const product = await FilterModel.findOne({productId: productId}).populate<{ productId: TechniqueDocumentType }>('productId')
+        const product = await FilterModel.findOne({productId: productId}).populate<{ productId: TechniqueDocumentType | ProductDocumentType }>('productId')
         if (!product) {
             throw ApiError.BadRequest(`product with this ID:${productId} is not registered`,)
         }
@@ -102,7 +102,7 @@ class ProductService  {
         return {
             resultCode,
             messages,
-            data: productDto || null
+            data: [productDto] || null
         }
     }
 
@@ -113,12 +113,11 @@ class ProductService  {
             resultCode = 1
             messages.push("array of products id is not set")
         }
-        const products = await FilterModel.find({}).where('productId').in(listProductsId).populate<{ productId: TechniqueDocumentType }[]>('productId')
+        const products = await FilterModel.find({}).where('productId').in(listProductsId).populate<{ productId: TechniqueDocumentType  | ProductDocumentType }>('productId')
         if (!products || products.length === 0) {
-            throw ApiError.BadRequest(`no products found `,)
+            throw ApiError.BadRequest(`no products found`,)
         }
         const productDto = products.map((p) => {
-
             return {
                 type: p.type,
                 span: p.span,
@@ -151,14 +150,13 @@ class ProductService  {
         const messages = []
         let products: Array<any> = []
         if (filter === "All") {
-            products = await FilterModel.find({}).sort({priority: -1}).populate<{ productId: TechniqueDocumentType }>('productId')
+            products = await FilterModel.find({}).sort({priority: -1}).populate<{ productId: TechniqueDocumentType | ProductDocumentType }>('productId')
         } else if (filter === "Technique" || filter === "Premium" || filter === "Gold" || filter === "Provisions") {
-            products = await FilterModel.find({}).where('filter').in([filter]).sort({priority: -1}).populate('productId')
+            products = await FilterModel.find({}).where('filter').in([filter]).sort({priority: -1}).populate<{productId: TechniqueDocumentType  | ProductDocumentType}>('productId')
         } else {
             resultCode = 1
             messages.push(`filter:${filter} must be "Technique" or "Premium"  or "Gold"  or "Provisions"`)
         }
-        /* console.log(products)*/
         const productDto = products.map((p) => {
             return {
                 type: p.type,

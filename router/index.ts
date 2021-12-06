@@ -14,7 +14,9 @@ router.get(`/product`,productController.getOneProduct)
 
 router.post(`/products`,productController.getProductsByList)
 
-/*router.post(`/addProducts` , productController.addManyProductsForType)*/
+
+router.post(`/addProducts` , productController.addManyProductsForType)
+router.post(`/addProductsTech` , productController.addManyProductsTech)
 
 router.post(`/product` , productController.addProduct)
 

@@ -2,7 +2,6 @@ import {Schema, model, Document} from 'mongoose';
 import {ProductDataType} from "../type/dataType";
 
 export interface ProductSchemaType {
-    productId: string,
     name: string,
     description: string,
     price: {
@@ -11,8 +10,8 @@ export interface ProductSchemaType {
             currency?: string,
         },
         actual: {
-            cost?: string,
-            currency?: string,
+            cost: string,
+            discountType: string,
         },
     },
     images: {
@@ -35,8 +34,8 @@ const ProvisionsScheme: Schema<ProductDocumentType>  = new Schema({
             currency: {type: String, default: "$",},
         },
         actual: {
-            cost: {type: String, default: 0,},
-            currency: {type: String, default: "$",},
+            cost: {type: String, require: true,},
+            discountType: {type: String, default: "",},
         },
     },
     images: {
@@ -58,7 +57,7 @@ ProvisionsScheme.methods.getData = function () {
             },
             actual: {
                 cost: this.price.actual.cost,
-                currency: this.price.actual.currency,
+                discountType: this.price.actual.discountType,
             },
         },
         images: {
