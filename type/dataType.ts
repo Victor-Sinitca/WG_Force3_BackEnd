@@ -11,7 +11,7 @@ type nationType =
     | "usa"
     | "ussr"
 type typeType = "AT-SPG" | "heavyTank" | "lightTank" | "mediumTank" | "SPG"
-type tierType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+type tierType = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10"
 export type FilterType = 'Technique' | 'Premium' | 'Gold' | 'Provisions'
 
 export interface UserDataType {
@@ -50,7 +50,7 @@ export interface TechniqueDataType extends ProductDataType {
 }
 
 export interface ProductDtoType{
-    type: typeType,
+    type: FilterType,
     span: number,
     data: Array<TechniqueDataType & ProductDataType>
 }
