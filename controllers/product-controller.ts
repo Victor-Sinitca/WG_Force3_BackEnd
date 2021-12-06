@@ -4,18 +4,21 @@ import {FilterType, ProductDataType, TechniqueDataType} from "../type/dataType";
 import {TechniqueSchemaType} from "../models/technique-model";
 import {ProductSchemaType} from "../models/provisions-model";
 
-type getProductsByListBodyType = {
-    listProductsId: Array<string>
-}
 type AddProductBodyType = {
     data: TechniqueSchemaType;
     type: FilterType
 }
 type getOneProductQueryType = {
-    id: string
+    id: string,
+    currency: string
+}
+type getProductsByListBodyType = {
+    listProductsId: Array<string>,
+    currency: string
 }
 type getProductsOnFilterQueryType = {
-    filter: string
+    filter: string,
+    currency: string
 }
 type addManyProductsForTypeType = {
     products_vehicles_0: any,
@@ -43,9 +46,9 @@ class ProductController {
 
     async getOneProduct(req: express.Request<{}, {}, {}, getOneProductQueryType>, res: express.Response, next: any) {
         try {
-            const {id} = req.query
+            const {id, currency = "$"} = req.query
             /* console.log(`id:${userId}`)*/
-            const oneProduct = await ProductService.getOneProduct(id)
+            const oneProduct = await ProductService.getOneProduct(id, currency)
             await res.json(oneProduct)
         } catch (e) {
             next(e)
@@ -54,9 +57,9 @@ class ProductController {
 
     async getProductsByList(req: express.Request<{}, {}, getProductsByListBodyType, {}>, res: express.Response, next: any) {
         try {
-            const {listProductsId} = req.body
+            const {listProductsId, currency = "$"} = req.body
             /* console.log(`listProductsId:${listProductsId}`)*/
-            const products = await ProductService.getProductsByList(listProductsId)
+            const products = await ProductService.getProductsByList(listProductsId, currency)
             await res.json(products)
         } catch (e) {
             next(e)
@@ -65,9 +68,9 @@ class ProductController {
 
     async getProductsOnFilter(req: express.Request<{}, {}, {}, getProductsOnFilterQueryType>, res: express.Response, next: any) {
         try {
-            const {filter} = req.query
+            const {filter, currency = "$"} = req.query
             /*console.log(`getProductsOnFilter filter:${filter}`)*/
-            const products = await ProductService.getProductsOnFilter(filter)
+            const products = await ProductService.getProductsOnFilter(filter, currency)
             await res.json(products)
         } catch (e) {
             next(e)

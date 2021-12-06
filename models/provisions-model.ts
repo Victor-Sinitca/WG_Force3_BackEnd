@@ -21,7 +21,7 @@ export interface ProductSchemaType {
 }
 
 export interface ProductDocumentType extends ProductSchemaType, Document {
-    getData: () => ProductDataType;
+    getData: (ratioCurrency?:number, currency?:string) => ProductDataType;
 }
 
 
@@ -45,18 +45,18 @@ const ProvisionsScheme: Schema<ProductDocumentType>  = new Schema({
 })
 
 
-ProvisionsScheme.methods.getData = function () {
+ProvisionsScheme.methods.getData = function (ratioCurrency:number =1, currency:string="$") {
     return {
         id: this._id,
         name: this.name,
         description: this.description,
         price: {
             basic: {
-                cost: this.price.basic.cost,
-                currency: this.price.basic.currency,
+                cost:"" + Math.ceil(+this.price.basic.cost * ratioCurrency*100)/100,
+                currency: currency,
             },
             actual: {
-                cost: this.price.actual.cost,
+                cost: "" + Math.ceil(+this.price.actual.cost * ratioCurrency*100)/100,
                 discountType: this.price.actual.discountType,
             },
         },

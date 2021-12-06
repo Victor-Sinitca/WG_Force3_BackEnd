@@ -22,18 +22,18 @@ const PremiumScheme: Schema<ProductDocumentType> = new Schema({
 })
 
 
-PremiumScheme.methods.getData = function () {
+PremiumScheme.methods.getData = function (ratioCurrency:number, currency:string) {
     return {
         id: this._id,
         name: this.name,
         description: this.description,
         price: {
             basic: {
-                cost: this.price.basic.cost,
-                currency: this.price.basic.currency,
+                cost:"" + Math.ceil(+this.price.basic.cost * ratioCurrency*100)/100,
+                currency: currency,
             },
             actual: {
-                cost: this.price.actual.cost,
+                cost: "" + Math.ceil(+this.price.actual.cost * ratioCurrency*100)/100,
                 discountType: this.price.actual.discountType,
             },
         },

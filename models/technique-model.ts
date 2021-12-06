@@ -13,7 +13,7 @@ export interface TechniqueSchemaType extends ProductSchemaType {
 }
 
 export interface TechniqueDocumentType extends TechniqueSchemaType, Document {
-    getData: () => TechniqueDataType;
+    getData: (ratioCurrency?:number, currency?:string) => TechniqueDataType;
 }
 
 
@@ -41,7 +41,7 @@ const TechniqueScheme: Schema<TechniqueDocumentType> = new Schema({
         span_2x1: {type: String, default: null},
     },
 })
-TechniqueScheme.methods.getData = function () {
+TechniqueScheme.methods.getData = function (ratioCurrency:number =1, currency:string ="$") {
     return {
         id: this._id,
         name: this.name,
@@ -54,11 +54,11 @@ TechniqueScheme.methods.getData = function () {
         },
         price: {
             basic: {
-                cost: this.price.basic.cost,
-                currency: this.price.basic.currency,
+                cost:"" + Math.ceil(+this.price.basic.cost * ratioCurrency*100)/100,
+                currency: currency,
             },
             actual: {
-                cost: this.price.actual.cost,
+                cost: "" + Math.ceil(+this.price.actual.cost * ratioCurrency*100)/100,
                 discountType: this.price.actual.discountType,
             },
         },
