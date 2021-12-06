@@ -7,6 +7,7 @@ const TechniqueScheme = new Schema({
         nation: {type: String, require: true},
         type: {type: String, require: true},
         tier: {type: String, require: true},
+        is_wheeled:{type: Boolean, default:false}
     },
     price: {
         basic: {
@@ -15,7 +16,7 @@ const TechniqueScheme = new Schema({
         },
         actual: {
             cost: {type: String, default: 0,},
-            currency: {type: String, default: "$",},
+            discountType: {type: String, default: "",},
         },
     },
     images: {
@@ -31,7 +32,8 @@ TechniqueScheme.methods.getData = function () {
         filter: {
             nation: this.filter.nation,
             type: this.filter.type,
-            tier: this.filter.tier
+            tier: this.filter.tier,
+            is_wheeled:this.filter.is_wheeled,
         },
         price: {
             basic: {
@@ -40,7 +42,7 @@ TechniqueScheme.methods.getData = function () {
             },
             actual: {
                 cost: this.price.actual.cost,
-                currency: this.price.actual.currency,
+                discountType: this.price.actual.discountType,
             },
         },
         images: {

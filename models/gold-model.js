@@ -11,7 +11,7 @@ const GoldScheme = new Schema({
         },
         actual: {
             cost: {type: String, default: 0,},
-            currency: {type: String, default: "$",},
+            discountType: {type: String, default: "",},
         },
     },
     images: {
@@ -32,7 +32,7 @@ GoldScheme.methods.getData = function () {
             },
             actual: {
                 cost: this.price.actual.cost,
-                currency: this.price.actual.currency,
+                discountType: this.price.actual.discountType,
             },
         },
         images: {
