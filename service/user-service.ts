@@ -96,9 +96,7 @@ class UserService {
         return {
             resultCode,
             messages,
-            data: {
-                wishlist
-            }
+            data:wishlist
         }
     }
 
@@ -132,9 +130,7 @@ class UserService {
         return {
             resultCode,
             messages,
-            data: {
-                shoppingList
-            }
+            data:shoppingList
         }
     }
 }
