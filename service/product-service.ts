@@ -1,12 +1,14 @@
-const ApiError = require(`../exceptions/api-error`)
-const TechniqueModel = require(`../models/technique-model`)
-const PremiumModel = require(`../models/premium-model`)
-const GoldModel = require(`../models/gold-model`)
-const ProvisionsModel = require(`../models/provisions-model`)
-const FilterModel = require(`../models/filter-model`)
+import FilterModel from "../models/filter-model";
+import GoldModel from "../models/gold-model";
+import PremiumModel from "../models/premium-model";
+import CurrencyModel from "../models/currency-model";
+import TechniqueModel, {TechniqueDocumentType, TechniqueSchemaType} from "../models/technique-model";
+import ProvisionsModel, {ProductDocumentType, ProductSchemaType} from "../models/provisions-model";
+import {ApiError} from "../exceptions/api-error";
+import {FilterType, ProductDataType, TechniqueDataType} from "../type/dataType";
+
 
 const type = ["string", "bigint", "boolean", "number", "object", "symbol", "undefined", "function"]
-
 const product = {
     name: {type: 'string', require: true},
     description: {type: 'string', require: true},
@@ -32,13 +34,8 @@ const product = {
 }
 
 
-function verifyByType(data, type, resultCode, messages) {
-
-    return {}
-}
-
 class ProductService {
-    async addProduct(productData, type) {
+    async addProduct(productData: ProductSchemaType | TechniqueSchemaType, type: FilterType) {
         let resultCode = 0
         const messages = []
         if (!productData) {
@@ -49,7 +46,7 @@ class ProductService {
             resultCode = 1
             messages.push("type product not set or not string")
         }
-        let productDto = null
+        let productDto: TechniqueDataType | ProductDataType | null = null
         if (type === "Technique") {
             const candidate = await TechniqueModel.findOne({name: productData.name})
             if (candidate) throw ApiError.BadRequest(`продукт с таким именем:${productData.name} уже зарегистрирован`,)
@@ -87,21 +84,28 @@ class ProductService {
         }
     }
 
-    async getOneProduct(productId) {
+    async getOneProduct(productId: string, currency: string) {
         let resultCode = 0
+        let ratioCurrency = 1
         const messages = []
         if (!productId) {
             resultCode = 1
             messages.push("product id not set")
         }
-        const product = await FilterModel.findOne({productId: productId}).populate('productId')
+        const product = await FilterModel.findOne({productId: productId}).populate<{ productId: TechniqueDocumentType | ProductDocumentType }>('productId')
         if (!product) {
             throw ApiError.BadRequest(`product with this ID:${productId} is not registered`,)
+        }
+        if (currency !== "$") {
+            let currencyDB = await CurrencyModel.findOne({nameCurrency: currency})
+            if (currencyDB) {
+                ratioCurrency = currencyDB.getData().ratioToBaseCurrency
+            } else currency = "$"
         }
         const productDto = {
             type: product.type,
             span: product.span,
-            data: product.productId.getData()
+            data: product.productId.getData(ratioCurrency, currency)
         }
         return {
             resultCode,
@@ -110,22 +114,30 @@ class ProductService {
         }
     }
 
-    async getProductsByList(listProductsId = []) {
+    async getProductsByList(listProductsId: Array<string> = [], currency: string) {
         let resultCode = 0
+        let ratioCurrency = 1
         const messages = []
         if (listProductsId.length === 0) {
             resultCode = 1
             messages.push("array of products id is not set")
         }
-        const products = await FilterModel.find().where('productId').in(listProductsId).populate('productId')
+        const products = await FilterModel.find({}).where('productId').in(listProductsId).populate<{ productId: TechniqueDocumentType | ProductDocumentType }>('productId')
         if (!products || products.length === 0) {
-            throw ApiError.BadRequest(`продукт с таким именем:${productID} не зарегистрирован`,)
+            throw ApiError.BadRequest(`no products found`,)
+        }
+        if (currency !== "$") {
+            let currencyDB = await CurrencyModel.findOne({nameCurrency: currency})
+            if (currencyDB) {
+                ratioCurrency = currencyDB.getData().ratioToBaseCurrency
+            } else currency = "$"
         }
         const productDto = products.map((p) => {
             return {
                 type: p.type,
                 span: p.span,
-                data: p.productId.getData()
+                // @ts-ignore
+                data: p.productId.getData(ratioCurrency, currency)
             }
         })
         //если количество найденых продуктов не равно количеству запрошеных
@@ -147,26 +159,31 @@ class ProductService {
         }
     }
 
-    async getProductsOnFilter(filter = "") {
+    async getProductsOnFilter(filter: string = "", currency: string) {
         if (!filter) throw ApiError.BadRequest(`фильтр не установлен`)
         let resultCode = 0
+        let ratioCurrency = 1
         const messages = []
-        let products = []
+        let products: Array<any> = []
         if (filter === "All") {
-            products = await FilterModel.find({}).sort({priority: -1}).populate('productId')
+            products = await FilterModel.find({}).sort({priority: -1}).populate<{ productId: TechniqueDocumentType | ProductDocumentType }>('productId')
         } else if (filter === "Technique" || filter === "Premium" || filter === "Gold" || filter === "Provisions") {
-            products = await FilterModel.find({}).where('filter').in([filter]).sort({priority: -1}).populate('productId')
+            products = await FilterModel.find({}).where('filter').in([filter]).sort({priority: -1}).populate<{ productId: TechniqueDocumentType | ProductDocumentType }>('productId')
         } else {
             resultCode = 1
             messages.push(`filter:${filter} must be "Technique" or "Premium"  or "Gold"  or "Provisions"`)
         }
-
-        /* console.log(products)*/
+        if (currency !== "$") {
+            let currencyDB = await CurrencyModel.findOne({nameCurrency: currency})
+            if (currencyDB) {
+                ratioCurrency = currencyDB.getData().ratioToBaseCurrency
+            } else currency = "$"
+        }
         const productDto = products.map((p) => {
             return {
                 type: p.type,
                 span: p.span,
-                data: p.productId.getData()
+                data: p.productId.getData(ratioCurrency, currency)
             }
         })
         return {
@@ -177,4 +194,4 @@ class ProductService {
     }
 }
 
-module.exports = new ProductService()
+export default new ProductService()

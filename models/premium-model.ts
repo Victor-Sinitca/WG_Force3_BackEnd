@@ -1,6 +1,8 @@
-const {Schema, model} = require(`mongoose`)
+import {ProductDocumentType} from "./provisions-model";
+import { Schema , model} from 'mongoose';
 
-const PremiumScheme = new Schema({
+
+const PremiumScheme: Schema<ProductDocumentType> = new Schema({
     name: {type: String, require: true},
     description: {type: String, require: true},
     price: {
@@ -9,7 +11,7 @@ const PremiumScheme = new Schema({
             currency: {type: String, default: "$",},
         },
         actual: {
-            cost: {type: String, default: 0,},
+            cost: {type: String, require: true,},
             discountType: {type: String, default: "",},
         },
     },
@@ -20,18 +22,18 @@ const PremiumScheme = new Schema({
 })
 
 
-PremiumScheme.methods.getData = function () {
+PremiumScheme.methods.getData = function (ratioCurrency:number, currency:string) {
     return {
         id: this._id,
         name: this.name,
         description: this.description,
         price: {
             basic: {
-                cost: this.price.basic.cost,
-                currency: this.price.basic.currency,
+                cost:"" + Math.ceil(+this.price.basic.cost * ratioCurrency*100)/100,
+                currency: currency,
             },
             actual: {
-                cost: this.price.actual.cost,
+                cost: "" + Math.ceil(+this.price.actual.cost * ratioCurrency*100)/100,
                 discountType: this.price.actual.discountType,
             },
         },
@@ -41,5 +43,7 @@ PremiumScheme.methods.getData = function () {
         },
     }
 };
-module.exports = model("Premium", PremiumScheme)
+const PremiumModel = model<ProductDocumentType>("Premium", PremiumScheme);
+export default PremiumModel;
+
 

@@ -1,21 +1,19 @@
-const {Schema, model} = require(`mongoose`)
+import {Schema, model, Document} from 'mongoose';
+import {ProductDocumentType} from "./provisions-model";
 
-const TechniqueScheme = new Schema({
+
+
+
+const GoldScheme: Schema<ProductDocumentType> = new Schema({
     name: {type: String, require: true},
     description: {type: String, require: true},
-    filter: {
-        nation: {type: String, require: true},
-        type: {type: String, require: true},
-        tier: {type: String, require: true},
-        is_wheeled:{type: Boolean, default:false}
-    },
     price: {
         basic: {
             cost: {type: String, require: true},
             currency: {type: String, default: "$",},
         },
         actual: {
-            cost: {type: String, default: 0,},
+            cost: {type: String, require: true,},
             discountType: {type: String, default: "",},
         },
     },
@@ -24,24 +22,19 @@ const TechniqueScheme = new Schema({
         span_2x1: {type: String, default: null},
     },
 })
-TechniqueScheme.methods.getData = function () {
+
+GoldScheme.methods.getData = function (ratioCurrency:number, currency:string){
     return {
         id: this._id,
         name: this.name,
         description: this.description,
-        filter: {
-            nation: this.filter.nation,
-            type: this.filter.type,
-            tier: this.filter.tier,
-            is_wheeled:this.filter.is_wheeled,
-        },
         price: {
             basic: {
-                cost: this.price.basic.cost,
-                currency: this.price.basic.currency,
+                cost:"" + Math.ceil(+this.price.basic.cost * ratioCurrency*100)/100,
+                currency: currency,
             },
             actual: {
-                cost: this.price.actual.cost,
+                cost: "" + Math.ceil(+this.price.actual.cost * ratioCurrency*100)/100,
                 discountType: this.price.actual.discountType,
             },
         },
@@ -51,7 +44,8 @@ TechniqueScheme.methods.getData = function () {
         },
     }
 };
+const GoldModel = model<ProductDocumentType>("Gold", GoldScheme);
+export default GoldModel;
 
 
-module.exports = model("Technique", TechniqueScheme)
 
