@@ -1,5 +1,6 @@
 import { Schema ,Document, model} from 'mongoose';
 import {UserDataType} from "../type/dataType";
+import {SetUserDataType} from "../controllers/user-controller";
 
 
 interface UserSchemaType{
@@ -9,6 +10,7 @@ interface UserSchemaType{
 }
 interface UserDocumentType extends UserSchemaType, Document {
     getUser: () => UserDataType;
+    setUser: (data:UserDataType) => UserDataType;
     setWish: (wishId:string) => UserDataType;
     setPurchase: (shoppingId:string, isAdd:boolean) => UserDataType;
 }
@@ -21,6 +23,17 @@ const UserScheme: Schema<UserDocumentType> = new Schema<UserSchemaType>({
 })
 
 UserScheme.methods.getUser = function () {
+    return {
+        id: this._id,
+        name: this.name,
+        wishlist: this.wishlist,
+        shoppingList: this.shoppingList,
+    }
+};
+UserScheme.methods.setUser = function (data:UserDataType) {
+    this.wishlist = data.wishlist
+    this.shoppingList = data.shoppingList
+    this.name = data.name
     return {
         id: this._id,
         name: this.name,

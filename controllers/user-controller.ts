@@ -1,5 +1,6 @@
 import UserService from "../service/user-service"
 import * as express from "express";
+import {UserDataType} from "../type/dataType";
 
 type GetUserDataQueryType = {
     id: string
@@ -17,12 +18,31 @@ type SetUserPurchaseBodyType = {
     isAdd: boolean
 }
 
+
+
+export type SetUserDataType = {
+    data:UserDataType
+}
+
+
+
+
 class UserController {
     async addUser(req: express.Request<{}, {}, AddProductBodyType, {}>, res: express.Response, next: any) {
         try {
             const {name} = req.body
             /*console.log(`addUser - name:${name}`)*/
             const userData = await UserService.addUser(name)
+            await res.json(userData)
+        } catch (e) {
+            next(e)
+        }
+    }
+    async setUserData(req: express.Request<{}, {}, SetUserDataType, {}>, res: express.Response, next: any) {
+        try {
+            const {data} = req.body
+            /*console.log(`addUser - name:${name}`)*/
+            const userData = await UserService.setUserData(data)
             await res.json(userData)
         } catch (e) {
             next(e)

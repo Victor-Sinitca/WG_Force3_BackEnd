@@ -23,5 +23,6 @@ router.post(`/product` , productController.addProduct)
 router.post(`/user/wishlist` , userController.setUserWishlist)
 router.post(`/user/purchase` , userController.setUserPurchase)
 router.post(`/user` , userController.addUser)
+router.post(`/userData` , userController.setUserData)
 
 
