@@ -110,7 +110,7 @@ class ProductService {
         return {
             resultCode,
             messages,
-            data: [productDto] || null
+            data: productDto || null
         }
     }
 
