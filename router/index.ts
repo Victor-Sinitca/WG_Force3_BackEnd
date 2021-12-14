@@ -7,6 +7,7 @@ router.get(`/user`,userController.getUserData)
 router.get(`/users`,userController.getAllUsers)
 
 router.get(`/product/filter`,productController.getProductsOnFilter)
+router.get(`/product/type`,productController.getProductsOnType)
 router.get(`/product`,productController.getOneProduct)
 
 

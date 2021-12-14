@@ -192,6 +192,46 @@ class ProductService {
             data: productDto || null
         }
     }
+    async getProductsOnType(filter: string = "", currency: string) {
+        if (!filter) throw ApiError.BadRequest(`фильтр не установлен`)
+        let resultCode = 0
+        let ratioCurrency = 1
+        const messages = []
+        let products: Array<any> = []
+        if (filter === "All") {
+            products = await FilterModel.find({}).sort({priority: -1}).populate<{ productId: TechniqueDocumentType | ProductDocumentType }>('productId')
+        } else if (filter === "Technique" || filter === "Premium" || filter === "Gold" || filter === "Provisions") {
+            products = await FilterModel.find({}).where('type').in([filter]).sort({priority: -1}).populate<{ productId: TechniqueDocumentType | ProductDocumentType }>('productId')
+        } else {
+            resultCode = 1
+            messages.push(`filter:${filter} must be "Technique" or "Premium"  or "Gold"  or "Provisions"`)
+        }
+        if (currency !== "$") {
+            let currencyDB = await CurrencyModel.findOne({nameCurrency: currency})
+            if (currencyDB) {
+                ratioCurrency = currencyDB.getData().ratioToBaseCurrency
+            } else currency = "$"
+        }
+        const productDto = products.map((p) => {
+            return {
+                priority: p.priority,
+                name:p.name,
+                type: p.type,
+                span: p.span,
+                filter:p.filter,
+                data: p.productId.getData(ratioCurrency, currency)
+            }
+        })
+        return {
+            resultCode,
+            messages,
+            data: productDto || null
+        }
+    }
+
+
+
+
 }
 
 export default new ProductService()
