@@ -76,6 +76,17 @@ class ProductController {
             next(e)
         }
     }
+    async getProductsOnType(req: express.Request<{}, {}, {}, getProductsOnFilterQueryType>, res: express.Response, next: any) {
+        try {
+            console.log("getProductsOnType")
+            const {filter, currency = "$"} = req.query
+            /*console.log(`getProductsOnFilter filter:${filter}`)*/
+            const products = await ProductService.getProductsOnType(filter, currency)
+            await res.json(products)
+        } catch (e) {
+            next(e)
+        }
+    }
 
     async addManyProductsForType(req: express.Request<{}, {}, addManyProductsForTypeType, {}>, res: express.Response, next: any) {
         try {
