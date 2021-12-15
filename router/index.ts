@@ -14,6 +14,7 @@ router.get(`/product`,productController.getOneProduct)
 
 
 router.post(`/products`,productController.getProductsByList)
+router.post(`/changeProduct`,productController.changedProductById)
 
 
 router.post(`/addProducts` ,  productController.addManyProductsForType)

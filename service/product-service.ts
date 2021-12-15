@@ -192,6 +192,7 @@ class ProductService {
             data: productDto || null
         }
     }
+
     async getProductsOnType(filter: string = "", currency: string) {
         if (!filter) throw ApiError.BadRequest(`фильтр не установлен`)
         let resultCode = 0
@@ -215,10 +216,10 @@ class ProductService {
         const productDto = products.map((p) => {
             return {
                 priority: p.priority,
-                name:p.name,
+                name: p.name,
                 type: p.type,
                 span: p.span,
-                filter:p.filter,
+                filter: p.filter,
                 data: p.productId.getData(ratioCurrency, currency)
             }
         })
@@ -229,7 +230,53 @@ class ProductService {
         }
     }
 
+    async changedProductById(productData: any,currency: string) {
+        let resultCode = 0
+        let ratioCurrency = 1
+        const messages = []
+        if (!productData.data.id) {
+            resultCode = 1
+            messages.push("product id not set")
+        }
+        const product = await FilterModel.findOne({productId: productData.data.id}).populate<{ productId: TechniqueDocumentType | ProductDocumentType }>('productId')
+        if (!product) {
+            throw ApiError.BadRequest(`product with this ID:${productData.data.id} is not registered`,)
+        }
+        product.type = productData.type
+        product.span = productData.span
+        product.priority = productData.priority
+        product.name = productData.name
+        product.filter = productData.filter
 
+        product.productId.description=productData.data.description
+        product.productId.price.basic.cost=productData.data.price.basic.cost
+        product.productId.price.actual.cost=productData.data.price.actual.cost
+        product.productId.price.actual.discountType=productData.data.price.actual.discountType
+        product.productId.images.span_1x1=productData.data.images.span_1x1
+        product.productId.images.span_2x1=productData.data.images.span_2x1
+
+        await product.productId.save()
+        await product.save()
+        if (currency !== "$") {
+            let currencyDB = await CurrencyModel.findOne({nameCurrency: currency})
+            if (currencyDB) {
+                ratioCurrency = currencyDB.getData().ratioToBaseCurrency
+            } else currency = "$"
+        }
+        const productDto = {
+            priority: product.priority,
+            name: product.name,
+            type: product.type,
+            span: product.span,
+            filter: product.filter,
+            data: product.productId.getData(ratioCurrency, currency)
+        }
+        return {
+            resultCode,
+            messages,
+            data: productDto || null
+        }
+    }
 
 
 }
