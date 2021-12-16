@@ -266,6 +266,7 @@ class ProductService {
         product.filter = productData.filter
 
         product.productId.description = productData.data.description
+        product.productId.name = productData.data.name
         product.productId.price.basic.cost = productData.data.price.basic.cost
         product.productId.price.actual.cost = productData.data.price.actual.cost
         product.productId.price.actual.discountType = productData.data.price.actual.discountType
