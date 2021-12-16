@@ -30,7 +30,9 @@ type addManyProductsTechType = {
     data: ProductSchemaType[] | TechniqueSchemaType[],
     type: FilterType
 }
-
+type changedProductByIdBodyType ={
+    data:any
+}
 
 class ProductController {
     async addProduct(req: express.Request<{}, {}, AddProductBodyType, {}>, res: express.Response, next: any) {
@@ -71,6 +73,25 @@ class ProductController {
             const {filter, currency = "$"} = req.query
             /*console.log(`getProductsOnFilter filter:${filter}`)*/
             const products = await ProductService.getProductsOnFilter(filter, currency)
+            await res.json(products)
+        } catch (e) {
+            next(e)
+        }
+    }
+    async changedProductById(req: express.Request<{}, {},changedProductByIdBodyType, {} >, res: express.Response, next: any) {
+        try {
+            const {data} = req.body
+            const products = await ProductService.changedProductById(data, "S")
+            await res.json(products)
+        } catch (e) {
+            next(e)
+        }
+    }
+    async getProductsOnType(req: express.Request<{}, {}, {}, getProductsOnFilterQueryType>, res: express.Response, next: any) {
+        try {
+            const {filter, currency = "$"} = req.query
+            /*console.log(`getProductsOnFilter filter:${filter}`)*/
+            const products = await ProductService.getProductsOnType(filter, currency)
             await res.json(products)
         } catch (e) {
             next(e)

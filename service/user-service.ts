@@ -1,5 +1,10 @@
 import {ApiError} from "../exceptions/api-error";
 import UserModel from "../models/user-model";
+import {UserDataType} from "../type/dataType";
+import {SetUserDataType} from "../controllers/user-controller";
+
+
+
 
 class UserService {
     async addUser(name: string) {
@@ -42,6 +47,20 @@ class UserService {
         if (!user) throw ApiError.BadRequest(`user with that id:${userId} in not found`)
 
         const userDto = user.getUser()
+        return {
+            resultCode,
+            messages,
+            data: userDto
+        }
+    }
+    async setUserData(data:UserDataType ) {
+        let resultCode = 0
+        const messages: Array<string> = []
+
+        const user = await UserModel.findOne({_id: data.id})
+        if (!user) throw ApiError.BadRequest(`user with that id:${data.id} in not found`)
+        const userDto = user.setUser(data)
+        await user.save()
         return {
             resultCode,
             messages,
