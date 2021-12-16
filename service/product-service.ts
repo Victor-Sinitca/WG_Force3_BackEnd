@@ -8,31 +8,6 @@ import {ApiError} from "../exceptions/api-error";
 import {FilterType, ProductDataType, TechniqueDataType} from "../type/dataType";
 
 
-const type = ["string", "bigint", "boolean", "number", "object", "symbol", "undefined", "function"]
-const product = {
-    name: {type: 'string', require: true},
-    description: {type: 'string', require: true},
-    filter: {
-        nation: {type: 'string', require: true},
-        type: {type: 'string', require: true},
-        tier: {type: 'string', require: true},
-    },
-    price: {
-        basic: {
-            cost: {type: 'string', require: true},
-            currency: {type: 'string', default: "$",},
-        },
-        actual: {
-            cost: {type: 'string', default: 0,},
-            currency: {type: 'string', default: "$",},
-        },
-    },
-    images: {
-        span_1x1: {type: 'string', require: true},
-        span_2x1: {type: 'string', default: null},
-    },
-}
-
 
 export interface IFilterData {
     filter: Array<FilterType |"">,
@@ -40,7 +15,6 @@ export interface IFilterData {
     span: number;
     type: FilterType,
 }
-
 
 
 class ProductService {
@@ -116,10 +90,6 @@ class ProductService {
         if (!productData) {
             resultCode = 1
             messages.push("product data not set")
-        }
-        if (!type || typeof type !== "string") {
-            resultCode = 1
-            messages.push("type product not set or not string")
         }
         let productDto: TechniqueDataType | ProductDataType | null = null
 
