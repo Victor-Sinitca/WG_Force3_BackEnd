@@ -255,7 +255,7 @@ class ProductService {
             resultCode = 1
             messages.push("product id not set")
         }
-        const product = await FilterModel.findOne({productId: productData.data.id}).populate<{ productId: TechniqueDocumentType | ProductDocumentType }>('productId')
+        const product = await FilterModel.findOne({productId: productData.data.id}).populate<{ productId: TechniqueDocumentType}>('productId')
         if (!product) {
             throw ApiError.BadRequest(`product with this ID:${productData.data.id} is not registered`,)
         }
@@ -271,6 +271,10 @@ class ProductService {
         product.productId.price.actual.discountType = productData.data.price.actual.discountType
         product.productId.images.span_1x1 = productData.data.images.span_1x1
         product.productId.images.span_2x1 = productData.data.images.span_2x1
+
+        if( product.productId.filter && productData.productId.filter){
+            product.productId.filter = productData.productId.filter
+        }
 
         await product.productId.save()
         await product.save()
