@@ -1,4 +1,4 @@
-import ProductService from "../service/product-service"
+import ProductService, {IFilterData} from "../service/product-service"
 import * as express from "express";
 import {FilterType, ProductDataType, TechniqueDataType} from "../type/dataType";
 import {TechniqueSchemaType} from "../models/technique-model";
@@ -7,10 +7,18 @@ import {ProductSchemaType} from "../models/provisions-model";
 type AddProductBodyType = {
     data: TechniqueSchemaType;
     type: FilterType
+
+}
+type AddProductAdminBodyType = {
+    data: TechniqueSchemaType;
+    filterData:IFilterData
 }
 type getOneProductQueryType = {
     id: string,
     currency: string
+}
+type deleteProductByIdType = {
+    id: string,
 }
 type getProductsByListBodyType = {
     listProductsId: Array<string>,
@@ -45,12 +53,32 @@ class ProductController {
             next(e)
         }
     }
+    async addProductAdmin(req: express.Request<{}, {}, AddProductAdminBodyType, {}>, res: express.Response, next: any) {
+        try {
+            const {data, filterData} = req.body
+             console.log(`addProduct  data:${data} filterData${filterData} `)
+            const oneProduct = await ProductService.addProductAdmin(data, filterData)
+            await res.json(oneProduct)
+        } catch (e) {
+            next(e)
+        }
+    }
 
     async getOneProduct(req: express.Request<{}, {}, {}, getOneProductQueryType>, res: express.Response, next: any) {
         try {
             const {id, currency = "$"} = req.query
             /* console.log(`id:${userId}`)*/
             const oneProduct = await ProductService.getOneProduct(id, currency)
+            await res.json(oneProduct)
+        } catch (e) {
+            next(e)
+        }
+    }
+    async deleteProductById(req: express.Request<{}, {}, {}, deleteProductByIdType>, res: express.Response, next: any) {
+        try {
+            const {id } = req.query
+            /* console.log(`id:${userId}`)*/
+            const oneProduct = await ProductService.deleteProductById(id)
             await res.json(oneProduct)
         } catch (e) {
             next(e)

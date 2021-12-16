@@ -34,6 +34,15 @@ const product = {
 }
 
 
+export interface IFilterData {
+    filter: Array<FilterType |"">,
+    priority: number,
+    span: number;
+    type: FilterType,
+}
+
+
+
 class ProductService {
     async addProduct(productData: ProductSchemaType | TechniqueSchemaType, type: FilterType) {
         let resultCode = 0
@@ -98,6 +107,88 @@ class ProductService {
             resultCode,
             messages,
             data: [productDto] || null
+        }
+    }
+
+    async addProductAdmin(productData: ProductSchemaType | TechniqueSchemaType, filterData:IFilterData) {
+        let resultCode = 0
+        const messages = []
+        if (!productData) {
+            resultCode = 1
+            messages.push("product data not set")
+        }
+        if (!type || typeof type !== "string") {
+            resultCode = 1
+            messages.push("type product not set or not string")
+        }
+        let productDto: TechniqueDataType | ProductDataType | null = null
+
+        if (filterData.type === "Technique") {
+            const candidate = await TechniqueModel.findOne({name: productData.name})
+            if (candidate) {
+                resultCode = 1
+                messages.push(`продукт с таким именем:${productData.name} уже зарегистрирован`)
+            }else{
+                let product = await TechniqueModel.create(productData)
+                productDto = product.getData()
+                await FilterModel.create({productId: productDto.id, name: productDto.name, ...filterData})
+            }
+        } else if (filterData.type === "Premium") {
+            const candidate = await PremiumModel.findOne({name: productData.name})
+            if (candidate) {
+                resultCode = 1
+                messages.push(`продукт с таким именем:${productData.name} уже зарегистрирован`)
+            }else {
+                let product = await PremiumModel.create(productData)
+                productDto = product.getData()
+                await FilterModel.create({productId: productDto.id, name: productDto.name, ...filterData})
+            }
+
+
+        } else if (filterData.type === "Gold") {
+            const candidate = await GoldModel.findOne({name: productData.name})
+            if (candidate){
+                resultCode = 1
+                messages.push(`продукт с таким именем:${productData.name} уже зарегистрирован`)
+            } else {
+                let product = await GoldModel.create(productData)
+                productDto = product.getData()
+                await FilterModel.create({productId: productDto.id, name: productDto.name, ...filterData})
+            }
+
+        } else if (filterData.type === "Provisions") {
+            const candidate = await ProvisionsModel.findOne({name: productData.name})
+            if (candidate){
+                resultCode = 1
+                messages.push(`продукт с таким именем:${productData.name} уже зарегистрирован`)
+            } else {
+                let product = await ProvisionsModel.create(productData)
+                productDto = product.getData()
+                await FilterModel.create({productId: productDto.id, name: productDto.name, ...filterData})
+            }
+        } else {
+            resultCode = 1
+            messages.push(`the type must be one of these strings: Technique Premium Gold Provisions`)
+        }
+        return {
+            resultCode,
+            messages,
+            data: [productDto] || null
+        }
+    }
+
+    async deleteProductById(productId: string) {
+        let resultCode = 0
+        const messages = []  as any[]
+        const product = await FilterModel.findOne({productId: productId}).populate<{ productId: TechniqueDocumentType}>('productId')
+        console.log("deleteProductById")
+
+        await product.productId.remove()
+        await product.remove()
+        return {
+            resultCode,
+            messages,
+            data:  null
         }
     }
 
