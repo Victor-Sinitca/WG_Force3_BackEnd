@@ -273,8 +273,11 @@ class ProductService {
         product.productId.images.span_1x1 = productData.data.images.span_1x1
         product.productId.images.span_2x1 = productData.data.images.span_2x1
 
-        if( product.productId.filter && productData.productId.filter){
-            product.productId.filter = productData.productId.filter
+        if( product.productId.filter && productData.data.filter){
+            product.productId.filter.is_wheeled = productData.data.filter.is_wheeled
+            product.productId.filter.nation = productData.data.filter.nation
+            product.productId.filter.tier = productData.data.filter.tier
+            product.productId.filter.type = productData.data.filter.type
         }
 
         await product.productId.save()
