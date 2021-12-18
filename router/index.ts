@@ -9,6 +9,7 @@ router.get(`/users`,userController.getAllUsers)
 router.get(`/product/filter`,productController.getProductsOnFilter)
 router.get(`/product/type`,productController.getProductsOnType)
 router.get(`/product`,productController.getOneProduct)
+router.get(`/allProducts`,productController.getAllProducts)
 router.get(`/deleteProduct`,productController.deleteProductById)
 
 

@@ -8,9 +8,8 @@ import {ApiError} from "../exceptions/api-error";
 import {FilterType, ProductDataType, TechniqueDataType} from "../type/dataType";
 
 
-
 export interface IFilterData {
-    filter: Array<FilterType |"">,
+    filter: Array<FilterType | "">,
     priority: number,
     span: number;
     type: FilterType,
@@ -35,7 +34,7 @@ class ProductService {
             if (candidate) {
                 resultCode = 1
                 messages.push(`продукт с таким именем:${productData.name} уже зарегистрирован`)
-            }else{
+            } else {
                 let product = await TechniqueModel.create(productData)
                 productDto = product.getData()
                 await FilterModel.create({productId: productDto.id, name: productDto.name, type: type, filter: [type]})
@@ -45,7 +44,7 @@ class ProductService {
             if (candidate) {
                 resultCode = 1
                 messages.push(`продукт с таким именем:${productData.name} уже зарегистрирован`)
-            }else {
+            } else {
                 let product = await PremiumModel.create(productData)
                 productDto = product.getData()
                 await FilterModel.create({productId: productDto.id, name: productDto.name, type: type, filter: [type]})
@@ -54,7 +53,7 @@ class ProductService {
 
         } else if (type === "Gold") {
             const candidate = await GoldModel.findOne({name: productData.name})
-            if (candidate){
+            if (candidate) {
                 resultCode = 1
                 messages.push(`продукт с таким именем:${productData.name} уже зарегистрирован`)
             } else {
@@ -65,7 +64,7 @@ class ProductService {
 
         } else if (type === "Provisions") {
             const candidate = await ProvisionsModel.findOne({name: productData.name})
-            if (candidate){
+            if (candidate) {
                 resultCode = 1
                 messages.push(`продукт с таким именем:${productData.name} уже зарегистрирован`)
             } else {
@@ -84,7 +83,7 @@ class ProductService {
         }
     }
 
-    async addProductAdmin(productData: ProductSchemaType | TechniqueSchemaType, filterData:IFilterData) {
+    async addProductAdmin(productData: ProductSchemaType | TechniqueSchemaType, filterData: IFilterData) {
         let resultCode = 0
         const messages = []
         if (!productData) {
@@ -98,7 +97,7 @@ class ProductService {
             if (candidate) {
                 resultCode = 1
                 messages.push(`продукт с таким именем:${productData.name} уже зарегистрирован`)
-            }else{
+            } else {
                 let product = await TechniqueModel.create(productData)
                 productDto = product.getData()
                 await FilterModel.create({productId: productDto.id, name: productDto.name, ...filterData})
@@ -108,7 +107,7 @@ class ProductService {
             if (candidate) {
                 resultCode = 1
                 messages.push(`продукт с таким именем:${productData.name} уже зарегистрирован`)
-            }else {
+            } else {
                 let product = await PremiumModel.create(productData)
                 productDto = product.getData()
                 await FilterModel.create({productId: productDto.id, name: productDto.name, ...filterData})
@@ -117,7 +116,7 @@ class ProductService {
 
         } else if (filterData.type === "Gold") {
             const candidate = await GoldModel.findOne({name: productData.name})
-            if (candidate){
+            if (candidate) {
                 resultCode = 1
                 messages.push(`продукт с таким именем:${productData.name} уже зарегистрирован`)
             } else {
@@ -128,7 +127,7 @@ class ProductService {
 
         } else if (filterData.type === "Provisions") {
             const candidate = await ProvisionsModel.findOne({name: productData.name})
-            if (candidate){
+            if (candidate) {
                 resultCode = 1
                 messages.push(`продукт с таким именем:${productData.name} уже зарегистрирован`)
             } else {
@@ -149,8 +148,8 @@ class ProductService {
 
     async deleteProductById(productId: string) {
         let resultCode = 0
-        const messages = []  as any[]
-        const product = await FilterModel.findOne({productId: productId}).populate<{ productId: TechniqueDocumentType}>('productId')
+        const messages = [] as any[]
+        const product = await FilterModel.findOne({productId: productId}).populate<{ productId: TechniqueDocumentType }>('productId')
         console.log("deleteProductById")
 
         await product.productId.remove()
@@ -158,7 +157,7 @@ class ProductService {
         return {
             resultCode,
             messages,
-            data:  null
+            data: null
         }
     }
 
@@ -308,6 +307,40 @@ class ProductService {
         }
     }
 
+    async getAllProducts(pageNumber: number, pageSize: number, currency: string) {
+        let resultCode = 0
+        const messages = [] as Array<string>
+        let ratioCurrency = 1
+        const products: Array<any> = [] = await FilterModel.find({}).sort({priority: -1})
+            .populate<{ productId: TechniqueDocumentType | ProductDocumentType }>('productId')
+        const length=products.length
+
+        if (currency !== "$") {
+            let currencyDB = await CurrencyModel.findOne({nameCurrency: currency})
+            if (currencyDB) {
+                ratioCurrency = currencyDB.getData().ratioToBaseCurrency
+            } else currency = "$"
+        }
+        const filterProducts=products.filter((p, index) =>  index >= (pageNumber - 1) * pageSize && index < pageNumber * pageSize )
+
+        const productDto = filterProducts.map((p, ) => {
+                return {
+                    type: p.type,
+                    span: p.span,
+                    data: p.productId.getData(ratioCurrency, currency)
+                }
+        })
+
+        return {
+            resultCode,
+            messages,
+            data:{
+                countProducts:length,
+                products:productDto || null
+            }
+        }
+    }
+
     async changedProductById(productData: any, currency: string) {
         let resultCode = 0
         let ratioCurrency = 1
@@ -316,7 +349,7 @@ class ProductService {
             resultCode = 1
             messages.push("product id not set")
         }
-        const product = await FilterModel.findOne({productId: productData.data.id}).populate<{ productId: TechniqueDocumentType}>('productId')
+        const product = await FilterModel.findOne({productId: productData.data.id}).populate<{ productId: TechniqueDocumentType }>('productId')
         if (!product) {
             throw ApiError.BadRequest(`product with this ID:${productData.data.id} is not registered`,)
         }
@@ -334,7 +367,7 @@ class ProductService {
         product.productId.images.span_1x1 = productData.data.images.span_1x1
         product.productId.images.span_2x1 = productData.data.images.span_2x1
 
-        if( product.productId.filter && productData.data.filter){
+        if (product.productId.filter && productData.data.filter) {
             product.productId.filter.is_wheeled = productData.data.filter.is_wheeled
             product.productId.filter.nation = productData.data.filter.nation
             product.productId.filter.tier = productData.data.filter.tier
@@ -363,7 +396,6 @@ class ProductService {
             data: productDto || null
         }
     }
-
 
 }
 

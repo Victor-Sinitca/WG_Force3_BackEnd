@@ -17,6 +17,11 @@ type getOneProductQueryType = {
     id: string,
     currency: string
 }
+type getAllProductsQueryType = {
+    pageNumber:number,
+    pageSize:number,
+    currency: string
+}
 type deleteProductByIdType = {
     id: string,
 }
@@ -69,6 +74,16 @@ class ProductController {
             const {id, currency = "$"} = req.query
             console.log(`getOneProduct id:${id} currency:${currency}`)
             const oneProduct = await ProductService.getOneProduct(id, currency)
+            await res.json(oneProduct)
+        } catch (e) {
+            next(e)
+        }
+    }
+    async getAllProducts(req: express.Request<{}, {}, {}, getAllProductsQueryType>, res: express.Response, next: any) {
+        try {
+            const {pageNumber=1, pageSize=20, currency = "$"} = req.query
+            console.log(`getOneProduct pageNumber:${pageNumber} pageSize:${pageSize} currency:${currency}`)
+            const oneProduct = await ProductService.getAllProducts(+pageNumber,+pageSize, currency)
             await res.json(oneProduct)
         } catch (e) {
             next(e)
