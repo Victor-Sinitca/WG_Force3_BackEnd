@@ -46,7 +46,7 @@ class ProductController {
     async addProduct(req: express.Request<{}, {}, AddProductBodyType, {}>, res: express.Response, next: any) {
         try {
             const {data, type} = req.body
-            /* console.log(`addProduct  data:${data}`)*/
+            console.log(`addProduct  data:${data} type:${type}`)
             const oneProduct = await ProductService.addProduct(data, type)
             await res.json(oneProduct)
         } catch (e) {
@@ -56,7 +56,7 @@ class ProductController {
     async addProductAdmin(req: express.Request<{}, {}, AddProductAdminBodyType, {}>, res: express.Response, next: any) {
         try {
             const {data, filterData} = req.body
-             console.log(`addProduct  data:${data} filterData${filterData} `)
+            console.log(`addProductAdmin addProduct  data:${data} filterData${filterData} `)
             const oneProduct = await ProductService.addProductAdmin(data, filterData)
             await res.json(oneProduct)
         } catch (e) {
@@ -67,7 +67,7 @@ class ProductController {
     async getOneProduct(req: express.Request<{}, {}, {}, getOneProductQueryType>, res: express.Response, next: any) {
         try {
             const {id, currency = "$"} = req.query
-            /* console.log(`id:${userId}`)*/
+            console.log(`getOneProduct id:${id} currency:${currency}`)
             const oneProduct = await ProductService.getOneProduct(id, currency)
             await res.json(oneProduct)
         } catch (e) {
@@ -88,7 +88,7 @@ class ProductController {
     async getProductsByList(req: express.Request<{}, {}, getProductsByListBodyType, {}>, res: express.Response, next: any) {
         try {
             const {listProductsId, currency = "$"} = req.body
-            /* console.log(`listProductsId:${listProductsId}`)*/
+            console.log(`getProductsByList listProductsId:${listProductsId} currency:${currency}`)
             const products = await ProductService.getProductsByList(listProductsId, currency)
             await res.json(products)
         } catch (e) {
@@ -99,7 +99,7 @@ class ProductController {
     async getProductsOnFilter(req: express.Request<{}, {}, {}, getProductsOnFilterQueryType>, res: express.Response, next: any) {
         try {
             const {filter, currency = "$"} = req.query
-            /*console.log(`getProductsOnFilter filter:${filter}`)*/
+            console.log(`getProductsOnFilter filter:${filter} `)
             const products = await ProductService.getProductsOnFilter(filter, currency)
             await res.json(products)
         } catch (e) {
@@ -118,7 +118,7 @@ class ProductController {
     async getProductsOnType(req: express.Request<{}, {}, {}, getProductsOnFilterQueryType>, res: express.Response, next: any) {
         try {
             const {filter, currency = "$"} = req.query
-            /*console.log(`getProductsOnFilter filter:${filter}`)*/
+            console.log(`getProductsOnType filter:${filter} currency:${currency}`)
             const products = await ProductService.getProductsOnType(filter, currency)
             await res.json(products)
         } catch (e) {
