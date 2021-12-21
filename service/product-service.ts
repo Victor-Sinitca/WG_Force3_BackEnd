@@ -218,9 +218,9 @@ class ProductService {
             }
         })
         let productDtoSort = [] as { type: FilterType, span: number, data: any }[]
-        listProductsId.forEach(id => {
+        listProductsId.forEach(productId => {
             productDto.forEach(product => {
-                if (id === product.data.id) {
+                if (String(productId) === String(product.data.id)) {
                     productDtoSort.push(product)
                     return
                 }
