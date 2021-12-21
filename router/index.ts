@@ -1,8 +1,28 @@
 import * as express from "express";
 import userController from "../controllers/user-controller"
 import productController from "../controllers/product-controller"
+import {body} from 'express-validator'
+
+
 
 export const router = express.Router()
+
+
+
+router.post(`/registration`,
+    body(`email`).isEmail(),
+    body(`password`).isLength({min:5,max:35}),
+    userController.registration)
+router.post(`/login`,userController.login)
+router.post(`/logout`,userController.logout)
+router.get(`/activate/:link`,userController.activate)
+router.get(`/refresh`,userController.refresh)
+
+
+
+
+
+
 router.get(`/user`,userController.getUserData)
 router.get(`/users`,userController.getAllUsers)
 
@@ -26,8 +46,6 @@ router.post(`/product` , productController.addProduct)
 
 router.post(`/productAdmin` , productController.addProductAdmin)
 
-router.post(`/user/wishlist` , userController.setUserWishlist)
-router.post(`/user/purchase` , userController.setUserPurchase)
 router.post(`/user` , userController.addUser)
 router.post(`/userData` , userController.setUserData)
 

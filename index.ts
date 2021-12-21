@@ -6,6 +6,7 @@ import  * as  bodyParser from "body-parser";
 import errorHandler from "errorhandler";
 import mongoose from "mongoose";
 import errorMiddleware from "./middlewares/error-middleware"
+import cookieParser from "cookie-parser"
 
 
 mongoose.Promise = global.Promise;
@@ -16,11 +17,14 @@ const app = express()
 app.use(express.static('helper'));
 app.use(express.json({limit: '50mb'}))
 
+app.use(cookieParser()) // подключает res.cookie(`refreshToken`, userDate.refreshToken, )
+
 app.use(cors({
     origin: "*",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
-    optionsSuccessStatus: 204
+    optionsSuccessStatus: 204,
+    credentials:true, // разрешаем куки
 }))
 app.use(bodyParser.urlencoded({
     parameterLimit: 100000,

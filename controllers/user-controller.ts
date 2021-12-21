@@ -1,6 +1,8 @@
 import UserService from "../service/user-service"
 import * as express from "express";
 import {UserDataType} from "../type/dataType";
+import {ApiError} from "../exceptions/api-error";
+import { check, validationResult, ValidationError, ValidationChain, Result } from 'express-validator'
 
 type GetUserDataQueryType = {
     id: string
@@ -8,17 +10,6 @@ type GetUserDataQueryType = {
 type AddProductBodyType = {
     name: string
 }
-type SetUserWishlistBodyType = {
-    userId: string,
-    productId: string
-}
-type SetUserPurchaseBodyType = {
-    userId: string,
-    productId: string,
-    isAdd: boolean
-}
-
-
 
 export type SetUserDataType = {
     data:UserDataType
@@ -26,8 +17,89 @@ export type SetUserDataType = {
 
 
 
-
 class UserController {
+    async registration(req: express.Request<{}, {}, {email:string, password:string, name:string}, {}>, res: express.Response, next: any) {
+        try {
+            console.log("регистрация.............")
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                // @ts-ignore
+                return next(ApiError.BadRequest(`ошибка валидации`, errors.array()))
+            }
+            const {email, password,name} = req.body
+            const userDate = await UserService.registration(email, password, name)
+            res.cookie(`refreshToken`, userDate.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            return res.json(userDate)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async login(req: express.Request<{}, {}, {email:string, password:string}, {}>, res: express.Response, next: any) {
+        /* console.log("login try")*/
+        try {
+            console.log("пользователь зашел")
+            const {email, password} = req.body;
+            const userData = await UserService.login(email, password)
+            res.cookie(`refreshToken`, userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            return res.json(userData)
+        } catch (e) {
+            next(e)
+            /*console.log("login error")*/
+        }
+    }
+
+    async logout(req: express.Request<{}, {}, {}, {}>, res: express.Response, next: any) {
+        try {
+            console.log(`пользователь вышел`)
+            const {refreshToken} = req.cookies
+            const token = await UserService.logout(refreshToken)
+            console.log(`пользователь вышел1`)
+            res.clearCookie(`refreshToken`)
+            return res.json(token)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async activate(req: express.Request<{}, {}, {}, {}>, res: express.Response, next: any) {
+        try {
+            // @ts-ignore
+            const activationLink = req.params.link
+            await UserService.activate(activationLink)
+            return res.redirect("" + process.env.CLIENT_URL)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async refresh(req: express.Request<{}, {}, {}, {}>, res: express.Response, next: any) {
+        try {
+            const {refreshToken} = req.cookies
+            const userData = await UserService.refresh(refreshToken)
+            res.cookie(`refreshToken`, userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            return res.json(userData)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async getUsers(req: express.Request<{}, {}, {}, {}>, res: express.Response, next: any) {
+        try {
+            const users = await UserService.getAllUsers()
+            await res.json(users)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+
+
+
+
+
+
+
     async addUser(req: express.Request<{}, {}, AddProductBodyType, {}>, res: express.Response, next: any) {
         try {
             const {name} = req.body
@@ -69,29 +141,7 @@ class UserController {
         }
     }
 
-    async setUserWishlist(req: express.Request<{}, {}, SetUserWishlistBodyType, {}>, res: express.Response, next: any) {
-        try {
-            const {userId, productId} = req.body
-            /*console.log(`id:${userID}`)*/
-            /*console.log(`body:${JSON.stringify(req.body)}`)*/
-            const userData = await UserService.setUserWishlist(userId, productId)
-            await res.json(userData)
-        } catch (e) {
-            next(e)
-        }
-    }
 
-    async setUserPurchase(req: express.Request<{}, {}, SetUserPurchaseBodyType, {}>, res: express.Response, next: any) {
-        try {
-            const {userId, productId, isAdd} = req.body
-            /* console.log(`id:${userID}`)*/
-            /* console.log(`body:${JSON.stringify(req.body)}`)*/
-            const userData = await UserService.setUserPurchase(userId, productId, isAdd)
-            await res.json(userData)
-        } catch (e) {
-            next(e)
-        }
-    }
 }
 export default new UserController()
 
