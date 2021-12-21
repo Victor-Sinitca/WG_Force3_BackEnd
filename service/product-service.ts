@@ -217,6 +217,17 @@ class ProductService {
                 data: p.productId.getData(ratioCurrency, currency)
             }
         })
+        let productDtoSort = [] as { type: FilterType, span: number, data: any }[]
+        listProductsId.forEach(id => {
+            productDto.forEach(product => {
+                if (id === product.data.id) {
+                    productDtoSort.push(product)
+                    return
+                }
+            })
+        })
+
+
         //если количество найденых продуктов не равно количеству запрошеных
         if (listProductsId.length !== productDto.length) {
             listProductsId.forEach(productId => {
@@ -232,7 +243,7 @@ class ProductService {
         return {
             resultCode,
             messages,
-            data: productDto || null
+            data: productDtoSort.length > 0 ? productDtoSort : null
         }
     }
 
@@ -313,7 +324,7 @@ class ProductService {
         let ratioCurrency = 1
         const products: Array<any> = [] = await FilterModel.find({}).sort({priority: -1})
             .populate<{ productId: TechniqueDocumentType | ProductDocumentType }>('productId')
-        const length=products.length
+        const length = products.length
 
         if (currency !== "$") {
             let currencyDB = await CurrencyModel.findOne({nameCurrency: currency})
@@ -321,22 +332,22 @@ class ProductService {
                 ratioCurrency = currencyDB.getData().ratioToBaseCurrency
             } else currency = "$"
         }
-        const filterProducts=products.filter((p, index) =>  index >= (pageNumber - 1) * pageSize && index < pageNumber * pageSize )
+        const filterProducts = products.filter((p, index) => index >= (pageNumber - 1) * pageSize && index < pageNumber * pageSize)
 
-        const productDto = filterProducts.map((p, ) => {
-                return {
-                    type: p.type,
-                    span: p.span,
-                    data: p.productId.getData(ratioCurrency, currency)
-                }
+        const productDto = filterProducts.map((p,) => {
+            return {
+                type: p.type,
+                span: p.span,
+                data: p.productId.getData(ratioCurrency, currency)
+            }
         })
 
         return {
             resultCode,
             messages,
-            data:{
-                countProducts:length,
-                products:productDto || null
+            data: {
+                countProducts: length,
+                products: productDto || null
             }
         }
     }
