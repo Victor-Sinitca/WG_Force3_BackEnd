@@ -2,7 +2,7 @@ import * as express from "express";
 import userController from "../controllers/user-controller"
 import productController from "../controllers/product-controller"
 import {body} from 'express-validator'
-
+import authMiddleware from "../middlewares/auth-middleware"
 
 
 export const router = express.Router()
@@ -22,9 +22,13 @@ router.get(`/refresh`,userController.refresh)
 
 
 
+router.get(`/user`,authMiddleware,userController.getUserData)
 
-router.get(`/user`,userController.getUserData)
+
+//не исп
 router.get(`/users`,userController.getAllUsers)
+
+
 
 router.get(`/product/filter`,productController.getProductsOnFilter)
 router.get(`/product/type`,productController.getProductsOnType)

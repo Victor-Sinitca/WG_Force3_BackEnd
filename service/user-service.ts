@@ -3,7 +3,7 @@ import UserAuthModel, {UserAuthDataType} from "../models/userAuth-model";
 import {UserDataType} from "../type/dataType";
 
 import bcrypt from "bcrypt";
-import uuid from "uuid";
+import {v4} from 'uuid';
 import tokenService from "./token-service"
 import mailService from "./mail-service"
 import UserModel from "../models/user-model";
@@ -16,13 +16,16 @@ class UserService {
             throw ApiError.BadRequest(`пользователь с таким email:${email} уже зарегистрирован`,)
         }
         const hashPassword = await bcrypt.hash(password, 3)
-        const activationLink = uuid.v4()
+        const activationLink = v4()
         const userAuth = await UserAuthModel.create({email, password: hashPassword, activationLink})
         const user = await UserModel.create({name, wishlist: [], shoppingList: [], _id: userAuth._id})
-        await mailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`)
+
+       // await mailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`)
+        //console.log(`buuuuuuuuuuuuuuug`)
         const userAuthDto = userAuth.getUser()
         const userDto = user.getUser()
         const tokens = tokenService.generateTokens({...userAuthDto})
+        console.log(`tokens"${tokens}`)
         await tokenService.saveToken(userAuthDto.id, tokens.refreshToken)
         return {...tokens, user: userAuthDto, profile: userDto}
     }
@@ -129,7 +132,7 @@ class UserService {
                 data: null
             }
         }
-        const user = await UserModel.findOne({_id: userId})
+        const user = await UserModel.findById( userId)
         if (!user) throw ApiError.BadRequest(`user with that id:${userId} in not found`)
 
         const userDto = user.getUser()

@@ -18,7 +18,7 @@ interface UserDocumentType extends UserSchemaType, Document {
 
 
 const UserScheme: Schema<UserDocumentType> = new Schema<UserSchemaType>({
-    _id: {type: String, require: true},
+    /*_id: {type: String, require: true},*/
     name: {type: String, require: true},
     wishlist: [{type: String, require: true}],
     shoppingList: [{type: String, require: true}],
