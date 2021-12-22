@@ -13,6 +13,9 @@ export class ApiError extends Error{
     static UnauthorizedError (){
         return new ApiError(401, "пользователь не авторизован")
     }
+    static UnauthorizedRefreshError (){
+        return new ApiError(402, "вышел срок авторизации")
+    }
     static BadRequest(message:any,errors=[]){
         return new ApiError(400, message,errors)
     }

@@ -67,12 +67,14 @@ class UserService {
 
     async refresh(refreshToken: string) {
         if (!refreshToken) {
-            throw ApiError.UnauthorizedError()
+            /*throw ApiError.UnauthorizedError()*/
+            throw ApiError.UnauthorizedRefreshError()
         }
         const userAuthData = await tokenService.validateRefreshToken(refreshToken) as UserAuthDataType
         const tokenFromDB = await tokenService.findToken(refreshToken)
         if (!userAuthData || !tokenFromDB) {
-            throw ApiError.UnauthorizedError()
+            /*throw ApiError.UnauthorizedError()*/
+            throw ApiError.UnauthorizedRefreshError()
         }
 
 
