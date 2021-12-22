@@ -21,8 +21,8 @@ app.use(cookieParser()) // подключает res.cookie(`refreshToken`, userD
 
 app.use(cors({
     //origin: [""+process.env.CLIENT_URL1, ""+process.env.UI_URL],
-    origin: process.env.CLIENT_URL1,
-   // origin: [""+process.env.UI_URL,],
+   // origin: process.env.CLIENT_URL1,
+    origin: process.env.UI_URL,
    /* methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
     optionsSuccessStatus: 204,*/
